@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11+ English Writing Master - Full Suite</title>
+    <style>
+        :root { --primary: #3498db; --secondary: #27ae60; --warning: #e67e22; --danger: #e74c3c; --bg: #f0f2f5; }
+        body { font-family: 'Times New Roman', Times, serif; background: var(--bg); padding: 20px; line-height: 1.6; color: #333; }
+        .paper { max-width: 900px; margin: auto; background: #fff; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.1); border-radius: 8px; }
+        h2 { text-align: center; color: #2c3e50; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        
+        /* Dashboard */
+        .stats-bar { position: sticky; top: 10px; z-index: 100; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .badge { background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .instructions { font-style: italic; color: #666; margin-bottom: 20px; background: #eef7ff; padding: 15px; border-left: 5px solid var(--primary); }
+        
+        /* Work Area */
+        .text-content { font-size: 1.3rem; white-space: pre-wrap; background: #fffdf5; padding: 25px; border: 1px solid #eee; border-radius: 5px; min-height: 250px; cursor: default; }
+        .error-spot { border-bottom: 1px dashed transparent; cursor: help; transition: 0.2s; border-radius: 3px; }
+        .error-spot:hover { border-bottom: 1px dashed var(--primary); background: #f0f7ff; }
+        .corrected { color: var(--secondary) !important; font-weight: bold; border: none !important; background: transparent !important; }
+        
+        /* Controls */
+        .button-group { margin-top: 25px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button { padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
+        .btn-print { background: var(--secondary); color: white; }
+        .btn-report { background: #8e44ad; color: white; }
+        button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Modal */
+        #reportModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; overflow-y: auto; }
+        .report-content { background: white; max-width: 650px; margin: 40px auto; padding: 35px; border-radius: 12px; position: relative; }
+        .category-score { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee; }
+        .progress-bg { background: #eee; height: 12px; border-radius: 6px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { background: var(--primary); height: 100%; transition: width 1s ease-in-out; }
+
+        @media print {
+            .stats-bar, .mode-selector, .button-group, .instructions, #feedback, h2, select { display: none !important; }
+            body { background: white; padding: 0; }
+            .paper { box-shadow: none; width: 100%; max-width: 100%; padding: 0; border: none; }
+            .text-content { border: none; font-size: 14pt; background: white; padding: 0; }
+            .corrected { color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="paper">
+    <div class="stats-bar">
+        <div class="badge">Current Progress: <span id="score">0</span> / 15 Errors</div>
+        <div class="badge" style="background: var(--warning);">Completed: <span id="completedCount">0</span> / 10 Articles</div>
+    </div>
+
+    <h2>11+ English Writing: The Proofreader Challenge</h2>
+    
+    <div class="instructions">
+        <strong>Examiner's Guidelines:</strong> Carefully scan the text for errors in spelling, punctuation, grammar, or weak vocabulary. Click an error to fix it. Once a text is "Perfect", print it to your revision folder!
+    </div>
+
+    <div class="mode-selector">
+        <select id="articleSelect" onchange="initGame()" style="padding: 10px; width: 100%; max-width: 500px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
+            <option value="0">1. Creative Writing: The Haunted Manor</option>
+            <option value="1">2. Persuasive Writing: Abolish Homework</option>
+            <option value="2">3. Newspaper Report: Local Hero</option>
+            <option value="3">4. Diary Entry: An Unforgettable Journey</option>
+            <option value="4">5. Persuasive Speech: Plastic-Free School</option>
+            <option value="5">6. Information Leaflet: The Old Mill Museum</option>
+            <option value="6">7. Formal Letter: Toy Complaint</option>
+            <option value="7">8. Descriptive Writing: A Stormy Night</option>
+            <option value="8">9. Book Review: The Secret Kingdom</option>
+            <option value="9">10. Biography: Thomas Edison</option>
+        </select>
+    </div>
+
+    <div id="textDisplay" class="text-content"></div>
+    
+    <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px; border-radius: 5px; padding: 10px;"></div>
+
+    <div class="button-group">
+        <button class="btn-print" onclick="window.print()">Print Model Answer</button>
+        <button id="reportBtn" class="btn-report" onclick="showReport()" disabled>View Overall Diagnostic Report</button>
+    </div>
+</div>
+
+<div id="reportModal">
+    <div class="report-content">
+        <h2 style="border-bottom-color: #8e44ad; margin-top: 0;">11+ Student Diagnostic Report</h2>
+        <p>This analysis is based on your performance across the attempted 11+ writing tasks.</p>
+        <div id="reportData"></div>
+        <button onclick="document.getElementById('reportModal').style.display='none'" style="width:100%; background:#333; color:white; margin-top:20px; padding: 15px;">Return to Practice</button>
+    </div>
+</div>
+
+<script>
+const dataset = [
+    {
+        title: "The Haunted Manor",
+        content: "The moon shone [0] through the [1] branches of the oak tree. Everything was [2] quiet, [3] the owl hooted in the distance. Me and my brother [4] crept towards the [5] door. Neither of us [6] brave enough to enter. Suddenly, we [7] a [8] scream. \"Did you hear [9]\" whispered Tom, his voice [10] with fear. We [11] should have [12] at home. If we [13] stayed in bed, we [14] be safe now.",
+        errors: [
+            { original: "bright", options: ["brightly", "brighter", "brightest"], correct: "brightly", type: "Grammar", note: "Adverbs modify verbs." },
+            { original: "gnarled", options: ["narled", "gnarled", "gnarld"], correct: "gnarled", type: "Spelling", note: "Silent G." },
+            { original: "eerie", options: ["eerily", "eery", "eerie"], correct: "eerily", type: "Grammar", note: "Adverb needed." },
+            { original: "however", options: ["but", "consequently", "although"], correct: "but", type: "Grammar", note: "Conjunction choice." },
+            { original: "Me and my brother", options: ["My brother and I", "I and my brother", "Me and him"], correct: "My brother and I", type: "Grammar", note: "Subject pronoun order." },
+            { original: "old, wooden", options: ["old wooden", "old; wooden", "old. Wooden"], correct: "old wooden", type: "Punctuation", note: "No comma between these adjectives." },
+            { original: "were", options: ["was", "are", "been"], correct: "was", type: "Grammar", note: "Neither is singular." },
+            { original: "heard", options: ["heard", "herd", "heared"], correct: "heard", type: "Spelling", note: "Homophone check." },
+            { original: "piercing", options: ["piercing", "peircing", "pierseing"], correct: "piercing", type: "Spelling", note: "I before E rule." },
+            { original: "that.", options: ["that?", "that!", "that"], correct: "that?", type: "Punctuation", note: "Question mark for direct speech." },
+            { original: "trembling", options: ["trembling", "trembled", "tremble"], correct: "trembling", type: "Vocabulary Upgrade", note: "Active participle." },
+            { original: "definitly", options: ["definitely", "definately", "definatly"], correct: "definitely", type: "Spelling", note: "Contains 'finite'." },
+            { original: "stayed", options: ["stay", "of stayed", "been staying"], correct: "stay", type: "Grammar", note: "Modal structure." },
+            { original: "had", options: ["had", "would have", "have"], correct: "had", type: "Grammar", note: "Third conditional." },
+            { original: "would", options: ["would have", "will", "would"], correct: "would have", type: "Grammar", note: "Conditional perfect." }
+        ]
+    },
+    {
+        title: "Abolish School Homework",
+        content: "In my opinion, homework [0] abolished immediately. Firstly, students [1] enough time to rest after a [2] day. If a child [3] all day, they [4] a break. Furthermore, many [5] believe that homework [6] unnecessary stress. [7] a well-known fact that sleep is [8] than extra math. Some teachers [9] disagree, [10] the evidence is clear. Students [11] work more [12] in class if they are rested. In conclusion, [13] time to change [14] system.",
+        errors: [
+            { original: "should", options: ["should be", "must", "ought"], correct: "should be", type: "Grammar", note: "Passive voice needed." },
+            { original: "dont have", options: ["do not have", "doesn't have", "hasn't"], correct: "do not have", type: "Grammar", note: "Avoid contractions in formal writing." },
+            { original: "tiring", options: ["tiring", "tired", "tireing"], correct: "tiring", type: "Vocabulary Upgrade", note: "Descriptive adjective." },
+            { original: "studys", options: ["studies", "study", "studied"], correct: "studies", type: "Spelling", note: "Third person singular spelling." },
+            { original: "needed", options: ["need", "needs", "needing"], correct: "need", type: "Grammar", note: "Subject-verb agreement." },
+            { original: "parents", options: ["parents", "parent's", "parents'"], correct: "parents", type: "Punctuation", note: "No apostrophe for plural." },
+            { original: "cause", options: ["causes", "causing", "caused"], correct: "causes", type: "Grammar", note: "Homework is singular." },
+            { original: "Its", options: ["It is", "It's", "Its"], correct: "It is", type: "Grammar", note: "Formal tone without contractions." },
+            { original: "important", options: ["more important", "importanter", "most important"], correct: "more important", type: "Grammar", note: "Comparative degree." },
+            { original: "might", options: ["might", "may", "could"], correct: "might", type: "Vocabulary Upgrade", note: "Modal for possibility." },
+            { original: "but", options: ["; however,", "but", "so"], correct: "; however,", type: "Punctuation", note: "Advanced semicolon usage." },
+            { original: "will", options: ["would", "shall", "will"], correct: "would", type: "Grammar", note: "Conditional sentence." },
+            { original: "efficient", options: ["efficiently", "efficienter", "more efficient"], correct: "efficiently", type: "Grammar", note: "Adverb modifies 'work'." },
+            { original: "its", options: ["it's", "its", "there"], correct: "it's", type: "Punctuation", note: "Contraction of 'it is'." },
+            { original: "the schools", options: ["the school's", "the schools", "the school"], correct: "the school's", type: "Punctuation", note: "Possessive apostrophe." }
+        ]
+    },
+    {
+        title: "Newspaper Report",
+        content: "Yesterday, a [0] event occurred in our quiet town. A young girl, along with her dog, [1] a toddler from the icy river. Witnesses [2] that the water was [3] cold. 'I just did what anyone would do,' the girl [4]. However, the [5] parents were [6] grateful. The police [7] that the river [8] dangerous for weeks. Its [9] clear that more [10] is needed. There [11] many residents who [12] to see a fence installed. [13] the council has [14] ignored these [15] requests.",
+        errors: [
+            { original: "big", options: ["colossal", "large", "big"], correct: "colossal", type: "Vocabulary Upgrade", note: "Ambitious adjective." },
+            { original: "were saving", options: ["saved", "was saving", "saves"], correct: "saved", type: "Grammar", note: "Past simple for reports." },
+            { original: "says", options: ["said", "say", "saying"], correct: "said", type: "Grammar", note: "Tense consistency." },
+            { original: "bitter", options: ["bitterly", "bitter", "bitterness"], correct: "bitterly", type: "Grammar", note: "Adverb needed." },
+            { original: "said", options: ["exclaimed", "whispered", "mumbled"], correct: "exclaimed", type: "Vocabulary Upgrade", note: "Show emotion in speech." },
+            { original: "toddlers", options: ["toddler's", "toddlers'", "toddlers"], correct: "toddler's", type: "Punctuation", note: "Singular possessive." },
+            { original: "truely", options: ["truly", "truely", "truley"], correct: "truly", type: "Spelling", note: "Drop the 'e'." },
+            { original: "claims", options: ["claimed", "claim", "claiming"], correct: "claimed", type: "Grammar", note: "Past tense consistency." },
+            { original: "is", options: ["has been", "was", "been"], correct: "has been", type: "Grammar", note: "Present perfect for duration." },
+            { original: "Its", options: ["It's", "Its", "It is"], correct: "It's", type: "Spelling", note: "Homophone contraction." },
+            { original: "practice", options: ["practice", "practise", "practising"], correct: "practice", type: "Spelling", note: "Practice (Noun) in UK." },
+            { original: "is", options: ["are", "was", "were"], correct: "are", type: "Grammar", note: "Plural subject (residents)." },
+            { original: "want", options: ["want", "wants", "wanted"], correct: "want", type: "Grammar", note: "Present state." },
+            { original: "However", options: ["; however,", ". However", "However"], correct: "; however,", type: "Punctuation", note: "Advanced sentence connector." },
+            { original: "allready", options: ["already", "all ready", "ready"], correct: "already", type: "Spelling", note: "One 'l'." }
+        ]
+    },
+    {
+        title: "Diary Entry",
+        content: "Dear Diary, Today [0] a [1] disaster. The [2] of students [3] waiting for the bus since 7 am. [4] it finally arrived, we [5] our bags inside. I [6] so [7]! The scenery [8] beautiful: the mountains [9] like giants. However, my [10] friend [11] to feel sick. I [12] him some water. I [13] I had [14] more careful. I [15] never forget this day.",
+        errors: [
+            { original: "is", options: ["was", "is", "has been"], correct: "was", type: "Grammar", note: "Diaries record the past." },
+            { original: "total", options: ["complete", "total", "absolute"], correct: "complete", type: "Vocabulary Upgrade", note: "Ambitious vocab." },
+            { original: "group", options: ["group", "groups", "crowd"], correct: "group", type: "Grammar", note: "Collective noun." },
+            { original: "were", options: ["was", "are", "been"], correct: "was", type: "Grammar", note: "The group (singular) was." },
+            { original: "Where", options: ["When", "Where", "Which"], correct: "When", type: "Grammar", note: "Time conjunction." },
+            { original: "flung", options: ["flung", "flinged", "flinging"], correct: "flung", type: "Spelling", note: "Irregular past tense." },
+            { original: "feel", options: ["felt", "feel", "feels"], correct: "felt", type: "Grammar", note: "Tense consistency." },
+            { original: "happy", options: ["ecstatic", "happy", "glad"], correct: "ecstatic", type: "Vocabulary Upgrade", note: "Emotion upgrade." },
+            { original: "is", options: ["was", "were", "is"], correct: "was", type: "Grammar", note: "Past tense description." },
+            { original: "stand", options: ["stood", "stands", "standing"], correct: "stood", type: "Grammar", note: "Past tense personification." },
+            { original: "best", options: ["closest", "best", "goodest"], correct: "closest", type: "Vocabulary Upgrade", note: "Precise adjective." },
+            { original: "begins", options: ["began", "begin", "begun"], correct: "began", type: "Grammar", note: "Past tense." },
+            { original: "give", options: ["gave", "gives", "giving"], correct: "gave", type: "Grammar", note: "Tense consistency." },
+            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Past regret." },
+            { original: "be", options: ["been", "be", "being"], correct: "been", type: "Grammar", note: "Past participle." },
+            { original: "will", options: ["shall", "will", "would"], correct: "shall", type: "Vocabulary Upgrade", note: "Formal future 'I shall'." }
+        ]
+    },
+    {
+        title: "Persuasive Speech",
+        content: "Fellow students, [0] we continue to ignore the [1] amount of plastic in our canteen? A [2] of plastic bottles [3] found every single day. [4] not just a local issue; [5] a global crisis. Each of us [6] to take action. Some students [7] that it is too hard to change, [8] they are mistaken. If we [9] our habits, we [10] save our planet. I [11] recommend that we [12] reusable bottles. Let us [13] sustainability. The [14] future is in [15] hands.",
+        errors: [
+            { original: "shall", options: ["must", "shall", "can"], correct: "must", type: "Vocabulary Upgrade", note: "Strong persuasion." },
+            { original: "big", options: ["colossal", "big", "large"], correct: "colossal", type: "Vocabulary Upgrade", note: "Scale adjective." },
+            { original: "mountain", options: ["mountain", "mountains", "pile"], correct: "mountain", type: "Vocabulary Upgrade", note: "Metaphor." },
+            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "Subject-verb agreement." },
+            { original: "Its", options: ["It is", "Its", "It's"], correct: "It is", type: "Grammar", note: "Formal speech tone." },
+            { original: "its", options: ["it is", "its", "it's"], correct: "it is", type: "Grammar", note: "Clarity." },
+            { original: "need", options: ["needs", "need", "needing"], correct: "needs", type: "Grammar", note: "'Each' is singular." },
+            { original: "believes", options: ["believe", "believes", "believing"], correct: "believe", type: "Grammar", note: "Plural subject." },
+            { original: "but", options: ["; however,", "but", "so"], correct: "; however,", type: "Punctuation", note: "Formal connection." },
+            { original: "changed", options: ["change", "changed", "changing"], correct: "change", type: "Grammar", note: "First conditional." },
+            { original: "will", options: ["will", "would", "shall"], correct: "will", type: "Grammar", note: "Predicting result." },
+            { original: "strongly", options: ["strongly", "strong", "stronger"], correct: "strongly", type: "Grammar", note: "Adverb." },
+            { original: "practise", options: ["practice", "practise", "practising"], correct: "practice", type: "Spelling", note: "Practice (Noun)." },
+            { original: "prioritize", options: ["prioritise", "priority", "prioritize"], correct: "prioritise", type: "Vocabulary Upgrade", note: "High-level verb." },
+            { original: "worlds", options: ["world's", "worlds", "worlds'"], correct: "world's", type: "Punctuation", note: "Possessive." },
+            { original: "there", options: ["their", "there", "they're"], correct: "their", type: "Spelling", note: "Possessive homophone." }
+        ]
+    },
+    {
+        title: "Information Leaflet",
+        content: "The Old Mill [0] a [1] landmark since 1850. Visitors [2] enjoy the [3] atmosphere. A [4] of historical tools [5] displayed in the main hall. Please [6] that photography is not [7]. If you [8] any questions, our [9] staff [10] help you. The [11] toilet [12] located near the exit. It is [13] worth a visit! Our [14] [15] is to educate everyone.",
+        errors: [
+            { original: "is", options: ["has been", "is", "was"], correct: "has been", type: "Grammar", note: "History duration." },
+            { original: "nice", options: ["magnificent", "nice", "good"], correct: "magnificent", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "can", options: ["may", "can", "must"], correct: "may", type: "Vocabulary Upgrade", note: "Formal permission." },
+            { original: "quiet", options: ["tranquil", "quiet", "quite"], correct: "tranquil", type: "Vocabulary Upgrade", note: "Descriptive upgrade." },
+            { original: "collection", options: ["collection", "collections", "collect"], correct: "collection", type: "Grammar", note: "Noun usage." },
+            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "Collective singular." },
+            { original: "note", options: ["note", "notice", "noting"], correct: "note", type: "Grammar", note: "Imperative." },
+            { original: "alowed", options: ["allowed", "alowed", "aloud"], correct: "allowed", type: "Spelling", note: "Common spelling." },
+            { original: "had", options: ["have", "had", "has"], correct: "have", type: "Grammar", note: "Factual present." },
+            { original: "friendly", options: ["courteous", "friendly", "nice"], correct: "courteous", type: "Vocabulary Upgrade", note: "Professional vocab." },
+            { original: "will", options: ["shall", "will", "would"], correct: "shall", type: "Vocabulary Upgrade", note: "Formal tone." },
+            { original: "ladys", options: ["ladies'", "lady's", "ladys"], correct: "ladies'", type: "Punctuation", note: "Plural possessive." },
+            { original: "is", options: ["is", "are", "was"], correct: "is", type: "Grammar", note: "Subject-verb." },
+            { original: "definitly", options: ["definitely", "definately", "definatly"], correct: "definitely", type: "Spelling", note: "Spelling check." },
+            { original: "principals", options: ["principle", "principal", "principles"], correct: "principle", type: "Spelling", note: "Rule/Principle." },
+            { original: "aim", options: ["objective", "aim", "goal"], correct: "objective", type: "Vocabulary Upgrade", note: "Ambitious vocab." }
+        ]
+    },
+    {
+        title: "Formal Letter",
+        content: "Dear Sir or Madam, I am [0] to complain about a [1] robot I [2] last week. When I [3] the box, I [4] that the arm was [5]. [6] I was very [7]. Neither the lights [8] the sound [9] working. I [10] like a full [11]. I [12] my receipt as proof. I [13] to hearing from you [14]. [15] faithfully, John Smith.",
+        errors: [
+            { original: "writing", options: ["writing", "writting", "writeing"], correct: "writing", type: "Spelling", note: "Spelling check." },
+            { original: "defective", options: ["defective", "broken", "bad"], correct: "defective", type: "Vocabulary Upgrade", note: "Formal vocab." },
+            { original: "buy", options: ["bought", "buyed", "boughten"], correct: "bought", type: "Grammar", note: "Irregular past." },
+            { original: "open", options: ["opened", "open", "opening"], correct: "opened", type: "Grammar", note: "Past tense." },
+            { original: "discover", options: ["discovered", "discover", "discovering"], correct: "discovered", type: "Grammar", note: "Consistency." },
+            { original: "loose", options: ["loose", "lose", "losing"], correct: "loose", type: "Spelling", note: "Not tight." },
+            { original: "Consequently", options: ["; consequently,", "Consequently", "So"], correct: "; consequently,", type: "Punctuation", note: "Advanced connector." },
+            { original: "sad", options: ["disappointed", "sad", "unhappy"], correct: "disappointed", type: "Vocabulary Upgrade", note: "Formal emotion." },
+            { original: "or", options: ["nor", "or", "and"], correct: "nor", type: "Grammar", note: "Neither...nor." },
+            { original: "was", options: ["were", "was", "is"], correct: "were", type: "Grammar", note: "Plural agreement." },
+            { original: "want", options: ["would like", "want", "require"], correct: "would like", type: "Vocabulary Upgrade", note: "Formal request." },
+            { original: "refund", options: ["reimbursement", "refund", "money"], correct: "reimbursement", type: "Vocabulary Upgrade", note: "Ambitious vocab." },
+            { original: "enclosed", options: ["have enclosed", "enclosed", "enclose"], correct: "have enclosed", type: "Grammar", note: "Present perfect." },
+            { original: "look forward", options: ["look forward", "looking forward", "looked"], correct: "look forward", type: "Grammar", note: "Standard phrase." },
+            { original: "soon", options: ["promptly", "soon", "quick"], correct: "promptly", type: "Vocabulary Upgrade", note: "Professional vocab." },
+            { original: "Yours", options: ["Yours", "Your's", "Yours'"], correct: "Yours", type: "Punctuation", note: "No apostrophe." }
+        ]
+    },
+    {
+        title: "Descriptive Writing",
+        content: "The sky [0] a [1] shade of purple. Lightning [2] across the sky like [3]. The [4] of the thunder [5] the [6] house. Inside, I [7] by the fire. The [8] wind [9] through the cracks. Suddenly, the [10] [11] out. I was [12]. I [13] I [14] stayed at my [15] house.",
+        errors: [
+            { original: "was", options: ["became", "was", "is"], correct: "became", type: "Vocabulary Upgrade", note: "Dynamic verb." },
+            { original: "dark", options: ["menacing", "dark", "scary"], correct: "menacing", type: "Vocabulary Upgrade", note: "Atmospheric vocab." },
+            { original: "dance", options: ["danced", "dances", "dancing"], correct: "danced", type: "Grammar", note: "Descriptive past." },
+            { original: "fingers", options: ["jagged fingers", "fingers", "lines"], correct: "jagged fingers", type: "Vocabulary Upgrade", note: "Personification." },
+            { original: "sound", options: ["reverberation", "sound", "boom"], correct: "reverberation", type: "Vocabulary Upgrade", note: "Sensory vocab." },
+            { original: "shake", options: ["shook", "shaked", "shaken"], correct: "shook", type: "Grammar", note: "Irregular past." },
+            { original: "fragile", options: ["vulnerable", "fragile", "weak"], correct: "vulnerable", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "sit", options: ["was sitting", "sat", "sit"], correct: "was sitting", type: "Grammar", note: "Background action." },
+            { original: "cold", options: ["biting", "cold", "freezing"], correct: "biting", type: "Vocabulary Upgrade", note: "Sensory upgrade." },
+            { original: "whistle", options: ["whistled", "whistling", "whistles"], correct: "whistled", type: "Grammar", note: "Consistency." },
+            { original: "light", options: ["lights", "light", "lighting"], correct: "lights", type: "Grammar", note: "Noun number." },
+            { original: "go", options: ["went", "gone", "goes"], correct: "went", type: "Grammar", note: "Past tense." },
+            { original: "scared", options: ["petrified", "scared", "afraid"], correct: "petrified", type: "Vocabulary Upgrade", note: "Intense vocab." },
+            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Past regret." },
+            { original: "had", options: ["had", "have", "would"], correct: "had", type: "Grammar", note: "Past perfect." },
+            { original: "grandmothers", options: ["grandmother's", "grandmothers'", "grandmothers"], correct: "grandmother's", type: "Punctuation", note: "Possessive." }
+        ]
+    },
+    {
+        title: "Book Review",
+        content: "I have [0] read an [1] book called 'The Secret Kingdom'. The [2] is [3] and [4]. The main [5], [6] is a brave girl, [7] to save her [8]. One of the best [9] [10] the [11] scene. However, the [12] could be [13]. Overall, [14] a [15] read.",
+        errors: [
+            { original: "just", options: ["recently", "just", "now"], correct: "recently", type: "Vocabulary Upgrade", note: "Formal vocab." },
+            { original: "excellent", options: ["extraordinary", "excellent", "good"], correct: "extraordinary", type: "Vocabulary Upgrade", note: "Impactful vocab." },
+            { original: "story", options: ["narrative", "story", "plot"], correct: "narrative", type: "Vocabulary Upgrade", note: "Literary vocab." },
+            { original: "exciting", options: ["exhilarating", "exciting", "fun"], correct: "exhilarating", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "fast", options: ["fast-paced", "fast", "quick"], correct: "fast-paced", type: "Punctuation", note: "Compound hyphen." },
+            { original: "person", options: ["protagonist", "person", "character"], correct: "protagonist", type: "Vocabulary Upgrade", note: "Literary term." },
+            { original: "who", options: ["who", "whom", "which"], correct: "who", type: "Grammar", note: "Subject pronoun." },
+            { original: "try", options: ["tries", "try", "trying"], correct: "tries", type: "Grammar", note: "Subject-verb." },
+            { original: "country", options: ["realm", "country", "place"], correct: "realm", type: "Vocabulary Upgrade", note: "Setting vocab." },
+            { original: "part", options: ["chapters", "part", "scenes"], correct: "chapters", type: "Vocabulary Upgrade", note: "Specific vocab." },
+            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "One of...is." },
+            { original: "climax", options: ["climactic", "climax", "ending"], correct: "climactic", type: "Grammar", note: "Adjective form." },
+            { original: "ending", options: ["conclusion", "ending", "end"], correct: "conclusion", type: "Vocabulary Upgrade", note: "Formal conclusion." },
+            { original: "better", options: ["more compelling", "better", "gooder"], correct: "more compelling", type: "Vocabulary Upgrade", note: "Evaluative vocab." },
+            { original: "its", options: ["it's", "its", "there"], correct: "it's", type: "Spelling", note: "Contraction." },
+            { original: "great", options: ["captivating", "great", "nice"], correct: "captivating", type: "Vocabulary Upgrade", note: "Final impact." }
+        ]
+    },
+    {
+        title: "Biography",
+        content: "Thomas Edison was a [0] inventor. He [1] many [2] things. His [3] of inventions [4] the lightbulb. Although he [5] many [6], he never [7] up. 'Genius is 1% inspiration and 99% perspiration,' he [8]. [9] a [10] known fact that he [11] over 1,000 patents. Every [12] of his [13] [14] a story of [15].",
+        errors: [
+            { original: "good", options: ["prolific", "good", "famous"], correct: "prolific", type: "Vocabulary Upgrade", note: "Impact adjective." },
+            { original: "creates", options: ["created", "creates", "create"], correct: "created", type: "Grammar", note: "Past biography." },
+            { original: "new", options: ["innovative", "new", "cool"], correct: "innovative", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "list", options: ["catalogue", "list", "array"], correct: "catalogue", type: "Vocabulary Upgrade", note: "Formal list." },
+            { original: "include", options: ["includes", "include", "including"], correct: "includes", type: "Grammar", note: "Subject-verb." },
+            { original: "has", options: ["had", "has", "have"], correct: "had", type: "Grammar", note: "Consistency." },
+            { original: "failure", options: ["failures", "failure", "fails"], correct: "failures", type: "Grammar", note: "Noun number." },
+            { original: "give", options: ["gave", "gives", "given"], correct: "gave", type: "Grammar", note: "Past tense." },
+            { original: "said", options: ["remarked", "said", "told"], correct: "remarked", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "Its", options: ["It is", "Its", "It's"], correct: "It is", type: "Grammar", note: "Formal tone." },
+            { original: "well", options: ["widely", "well", "good"], correct: "widely", type: "Grammar", note: "Adverb choice." },
+            { original: "hold", options: ["held", "holds", "hold"], correct: "held", type: "Grammar", note: "Past fact." },
+            { original: "one", options: ["aspect", "one", "part"], correct: "aspect", type: "Vocabulary Upgrade", note: "Detailed vocab." },
+            { original: "work", options: ["work", "works", "working"], correct: "work", type: "Grammar", note: "Uncountable." },
+            { original: "tell", options: ["tells", "tell", "telling"], correct: "tells", type: "Grammar", note: "Subject-verb." },
+            { original: "persistance", options: ["persistence", "persistance", "persistency"], correct: "persistence", type: "Spelling", note: "Spelling: -ence." }
+        ]
+    }
+];
+
+let stats = { Spelling: { correct: 0, total: 0 }, Punctuation: { correct: 0, total: 0 }, Grammar: { correct: 0, total: 0 }, "Vocabulary Upgrade": { correct: 0, total: 0 } };
+let articlesFinished = new Set();
+let currentScore = 0;
+
+function initGame() {
+    let index = document.getElementById("articleSelect").value;
+    const art = dataset[index];
+    currentScore = 0;
+    document.getElementById("score").innerText = "0";
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("feedback").style.background = "transparent";
+    
+    let displayHtml = art.content;
+    art.errors.forEach((item, idx) => {
+        displayHtml = displayHtml.replace(`[${idx}]`, `<span class="error-spot" id="err-${idx}" onclick="handleCheck(${idx})">${item.original}</span>`);
+    });
+    
+    document.getElementById("textDisplay").innerHTML = displayHtml;
+}
+
+function handleCheck(idx) {
+    let artIndex = document.getElementById("articleSelect").value;
+    const errorData = dataset[artIndex].errors[idx];
+    const el = document.getElementById(`err-${idx}`);
+    
+    if (el.classList.contains('corrected')) return;
+
+    let message = `Select the correction for "${errorData.original}":\n\n` + errorData.options.map((o, i) => `${i+1}. ${o}`).join("\n");
+    let choice = prompt(message);
+    if (choice === null) return;
+    
+    let selected = errorData.options[parseInt(choice) - 1];
+
+    if (selected === errorData.correct) {
+        el.innerText = errorData.correct;
+        el.classList.add('corrected');
+        currentScore++;
+        stats[errorData.type].correct++;
+        stats[errorData.type].total++;
+        document.getElementById("score").innerText = currentScore;
+        document.getElementById("feedback").style.background = "#d4edda";
+        document.getElementById("feedback").style.color = "#155724";
+        document.getElementById("feedback").innerText = `✓ Excellent! [${errorData.type}] ${errorData.note}`;
+        
+        if (currentScore === 15) {
+            articlesFinished.add(artIndex);
+            document.getElementById("completedCount").innerText = articlesFinished.size;
+            document.getElementById("feedback").innerText = "CONGRATULATIONS! This text is now perfect. Click 'Print' to save it!";
+            if (articlesFinished.size >= 1) { // Unlock report after any progress
+                document.getElementById("reportBtn").disabled = false;
+            }
+        }
+    } else {
+        stats[errorData.type].total++;
+        document.getElementById("feedback").style.background = "#f8d7da";
+        document.getElementById("feedback").style.color = "#721c24";
+        document.getElementById("feedback").innerText = `✗ Not quite. Focus on your ${errorData.type} rules!`;
+    }
+}
+
+function showReport() {
+    let reportHtml = `<p><strong>Progress:</strong> ${articlesFinished.size} of 10 articles mastered.</p><hr>`;
+    let weakest = { name: "Grammar", accuracy: 101 };
+
+    for (let cat in stats) {
+        let accuracy = stats[cat].total > 0 ? Math.round((stats[cat].correct / stats[cat].total) * 100) : 0;
+        reportHtml += `<div class="category-score">
+            <div style="display:flex; justify-content:space-between;">
+                <strong>${cat}</strong>
+                <span>${accuracy}%</span>
+            </div>
+            <div class="progress-bg"><div class="progress-fill" style="width:${accuracy}%"></div></div>
+        </div>`;
+        if (stats[cat].total > 0 && accuracy < weakest.accuracy) {
+            weakest = { name: cat, accuracy: accuracy };
+        }
+    }
+
+    const tips = {
+        "Spelling": "Practice 'Look, Cover, Write, Check' for silent letters and homophones (there/their/they're).",
+        "Punctuation": "Master the Semicolon (;) to join independent clauses and use Colons (:) for lists.",
+        "Grammar": "Always double-check Subject-Verb agreement, especially with collective nouns like 'group' or 'team'.",
+        "Vocabulary Upgrade": "Avoid 'dead' words like 'said', 'good', or 'big'. Build a word bank of ambitious synonyms."
+    };
+
+    reportHtml += `<div style="margin-top:20px; padding:15px; background:#fff3cd; border: 1px solid #ffeeba; border-radius:8px;">
+        <strong>Examiner's Verdict:</strong> You need more work on <u>${weakest.name}</u>. ${tips[weakest.name]}
+    </div>`;
+
+    document.getElementById("reportData").innerHTML = reportHtml;
+    document.getElementById("reportModal").style.display = "block";
+}
+
+initGame();
+</script>
+</body>
+</html>
