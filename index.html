@@ -3,44 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>11+ English Writing Master - Full Suite</title>
+    <title>11+ English Mastery: SPGS Edition</title>
     <style>
         :root { --primary: #3498db; --secondary: #27ae60; --warning: #e67e22; --danger: #e74c3c; --bg: #f0f2f5; }
         body { font-family: 'Times New Roman', Times, serif; background: var(--bg); padding: 20px; line-height: 1.6; color: #333; }
         .paper { max-width: 900px; margin: auto; background: #fff; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.1); border-radius: 8px; }
         h2 { text-align: center; color: #2c3e50; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
         
-        /* Dashboard */
         .stats-bar { position: sticky; top: 10px; z-index: 100; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
         .badge { background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .instructions { font-style: italic; color: #666; margin-bottom: 20px; background: #eef7ff; padding: 15px; border-left: 5px solid var(--primary); }
         
-        /* Work Area */
-        .text-content { font-size: 1.3rem; white-space: pre-wrap; background: #fffdf5; padding: 25px; border: 1px solid #eee; border-radius: 5px; min-height: 250px; cursor: default; }
+        .text-content { font-size: 1.3rem; white-space: pre-wrap; background: #fffdf5; padding: 25px; border: 1px solid #eee; border-radius: 5px; min-height: 250px; }
         .error-spot { border-bottom: 1px dashed transparent; cursor: help; transition: 0.2s; border-radius: 3px; }
         .error-spot:hover { border-bottom: 1px dashed var(--primary); background: #f0f7ff; }
         .corrected { color: var(--secondary) !important; font-weight: bold; border: none !important; background: transparent !important; }
         
-        /* Controls */
         .button-group { margin-top: 25px; display: flex; gap: 10px; flex-wrap: wrap; }
         button { padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; }
         .btn-print { background: var(--secondary); color: white; }
+        .btn-analysis { background: var(--warning); color: white; }
         .btn-report { background: #8e44ad; color: white; }
-        button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
         button:disabled { background: #ccc; cursor: not-allowed; }
 
-        /* Modal */
-        #reportModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; overflow-y: auto; }
-        .report-content { background: white; max-width: 650px; margin: 40px auto; padding: 35px; border-radius: 12px; position: relative; }
-        .category-score { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee; }
-        .progress-bg { background: #eee; height: 12px; border-radius: 6px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { background: var(--primary); height: 100%; transition: width 1s ease-in-out; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; overflow-y: auto; }
+        .modal-content { background: white; max-width: 700px; margin: 40px auto; padding: 35px; border-radius: 12px; }
+        .dive-section { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 5px solid var(--primary); }
 
         @media print {
-            .stats-bar, .mode-selector, .button-group, .instructions, #feedback, h2, select { display: none !important; }
+            .stats-bar, .mode-selector, .button-group, .instructions, #feedback, h2, .modal { display: none !important; }
             body { background: white; padding: 0; }
-            .paper { box-shadow: none; width: 100%; max-width: 100%; padding: 0; border: none; }
-            .text-content { border: none; font-size: 14pt; background: white; padding: 0; }
+            .paper { box-shadow: none; width: 100%; max-width: 100%; padding: 0; }
+            .text-content { border: none; font-size: 14pt; background: white; }
             .corrected { color: black !important; }
         }
     </style>
@@ -49,278 +43,726 @@
 
 <div class="paper">
     <div class="stats-bar">
-        <div class="badge">Current Progress: <span id="score">0</span> / 15 Errors</div>
-        <div class="badge" style="background: var(--warning);">Completed: <span id="completedCount">0</span> / 10 Articles</div>
+        <div class="badge">Progress: <span id="score">0</span> / 15</div>
+        <div class="badge" style="background: var(--warning);">Articles: <span id="completedCount">0</span> Mastered</div>
     </div>
 
-    <h2>11+ English Writing: The Proofreader Challenge</h2>
+    <h2>11+ Creative Writing Excellence</h2>
     
     <div class="instructions">
-        <strong>Examiner's Guidelines:</strong> Carefully scan the text for errors in spelling, punctuation, grammar, or weak vocabulary. Click an error to fix it. Once a text is "Perfect", print it to your revision folder!
+        <strong>SPGS Exam Tip:</strong> Correct the text to build a literary masterpiece. Use <b>Literary Deep Dive</b> to learn advanced techniques.
     </div>
 
     <div class="mode-selector">
         <select id="articleSelect" onchange="initGame()" style="padding: 10px; width: 100%; max-width: 500px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
-            <option value="0">1. Creative Writing: The Haunted Manor</option>
-            <option value="1">2. Persuasive Writing: Abolish Homework</option>
-            <option value="2">3. Newspaper Report: Local Hero</option>
-            <option value="3">4. Diary Entry: An Unforgettable Journey</option>
-            <option value="4">5. Persuasive Speech: Plastic-Free School</option>
-            <option value="5">6. Information Leaflet: The Old Mill Museum</option>
-            <option value="6">7. Formal Letter: Toy Complaint</option>
-            <option value="7">8. Descriptive Writing: A Stormy Night</option>
-            <option value="8">9. Book Review: The Secret Kingdom</option>
-            <option value="9">10. Biography: Thomas Edison</option>
         </select>
     </div>
 
     <div id="textDisplay" class="text-content"></div>
-    
     <div id="feedback" style="margin-top:20px; font-weight:bold; min-height:30px; border-radius: 5px; padding: 10px;"></div>
 
     <div class="button-group">
-        <button class="btn-print" onclick="window.print()">Print Model Answer</button>
-        <button id="reportBtn" class="btn-report" onclick="showReport()" disabled>View Overall Diagnostic Report</button>
+        <button class="btn-print" onclick="window.print()">Print Perfect Version</button>
+        <button class="btn-analysis" onclick="showLiteraryDeepDive()">Literary Deep Dive 🎭</button>
+        <button id="reportBtn" class="btn-report" onclick="showReport()" disabled>Diagnostic Report</button>
     </div>
 </div>
 
-<div id="reportModal">
-    <div class="report-content">
-        <h2 style="border-bottom-color: #8e44ad; margin-top: 0;">11+ Student Diagnostic Report</h2>
-        <p>This analysis is based on your performance across the attempted 11+ writing tasks.</p>
+<div id="analysisModal" class="modal">
+    <div class="modal-content">
+        <h2 id="analysisTitle" style="border-bottom: 2px solid var(--warning);">Literary Deep Dive</h2>
+        <div id="analysisContent"></div>
+        <button onclick="document.getElementById('analysisModal').style.display='none'" style="width:100%; background:#333; color:white; margin-top:20px; padding: 15px; border-radius: 5px;">Return to Practice</button>
+    </div>
+</div>
+
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <h2 style="border-bottom: 2px solid #8e44ad;">Performance Analysis</h2>
         <div id="reportData"></div>
-        <button onclick="document.getElementById('reportModal').style.display='none'" style="width:100%; background:#333; color:white; margin-top:20px; padding: 15px;">Return to Practice</button>
+        <button onclick="document.getElementById('reportModal').style.display='none'" style="width:100%; background:#333; color:white; margin-top:20px; padding: 15px; border-radius: 5px;">Close Report</button>
     </div>
 </div>
 
 <script>
 const dataset = [
     {
-        title: "The Haunted Manor",
-        content: "The moon shone [0] through the [1] branches of the oak tree. Everything was [2] quiet, [3] the owl hooted in the distance. Me and my brother [4] crept towards the [5] door. Neither of us [6] brave enough to enter. Suddenly, we [7] a [8] scream. \"Did you hear [9]\" whispered Tom, his voice [10] with fear. We [11] should have [12] at home. If we [13] stayed in bed, we [14] be safe now.",
+        title: "1. Creative Writing: The Haunted Manor",
+        content: "The moon shone [0] through the [1] branches of the oak tree. Everything was [2] quiet, [3] the owl hooted in the distance. [4] crept towards the [5] door. Neither of us [6] brave enough to enter. Suddenly, we [7] a [8] scream. \"Did you hear [9]\" whispered Tom, his voice [10] with fear. We [11] should have [12] at home. If we [13] stayed in bed, we [14] be safe now.",
         errors: [
-            { original: "bright", options: ["brightly", "brighter", "brightest"], correct: "brightly", type: "Grammar", note: "Adverbs modify verbs." },
-            { original: "gnarled", options: ["narled", "gnarled", "gnarld"], correct: "gnarled", type: "Spelling", note: "Silent G." },
+            { original: "bright", options: ["brightly", "bright", "brightest"], correct: "brightly", type: "Grammar", note: "Adverbs modify verbs (shone)." },
+            { original: "narled", options: ["gnarled", "narled", "gnarld"], correct: "gnarled", type: "Spelling", note: "Silent G." },
             { original: "eerie", options: ["eerily", "eery", "eerie"], correct: "eerily", type: "Grammar", note: "Adverb needed." },
             { original: "however", options: ["but", "consequently", "although"], correct: "but", type: "Grammar", note: "Conjunction choice." },
             { original: "Me and my brother", options: ["My brother and I", "I and my brother", "Me and him"], correct: "My brother and I", type: "Grammar", note: "Subject pronoun order." },
             { original: "old, wooden", options: ["old wooden", "old; wooden", "old. Wooden"], correct: "old wooden", type: "Punctuation", note: "No comma between these adjectives." },
             { original: "were", options: ["was", "are", "been"], correct: "was", type: "Grammar", note: "Neither is singular." },
-            { original: "heard", options: ["heard", "herd", "heared"], correct: "heard", type: "Spelling", note: "Homophone check." },
-            { original: "piercing", options: ["piercing", "peircing", "pierseing"], correct: "piercing", type: "Spelling", note: "I before E rule." },
+            { original: "herd", options: ["heard", "herd", "heared"], correct: "heard", type: "Spelling", note: "Homophone check." },
+            { original: "pircing", options: ["piercing", "peircing", "pierseing"], correct: "piercing", type: "Spelling", note: "I before E rule." },
             { original: "that.", options: ["that?", "that!", "that"], correct: "that?", type: "Punctuation", note: "Question mark for direct speech." },
-            { original: "trembling", options: ["trembling", "trembled", "tremble"], correct: "trembling", type: "Vocabulary Upgrade", note: "Active participle." },
+            { original: "shaking", options: ["trembling", "shaking", "moving"], correct: "trembling", type: "Vocabulary Upgrade", note: "More descriptive." },
             { original: "definitly", options: ["definitely", "definately", "definatly"], correct: "definitely", type: "Spelling", note: "Contains 'finite'." },
-            { original: "stayed", options: ["stay", "of stayed", "been staying"], correct: "stay", type: "Grammar", note: "Modal structure." },
-            { original: "had", options: ["had", "would have", "have"], correct: "had", type: "Grammar", note: "Third conditional." },
+            { original: "stay", options: ["stayed", "of stayed", "been staying"], correct: "stayed", type: "Grammar", note: "Modal structure." },
+            { original: "would have", options: ["had", "would have", "have"], correct: "had", type: "Grammar", note: "Third conditional." },
             { original: "would", options: ["would have", "will", "would"], correct: "would have", type: "Grammar", note: "Conditional perfect." }
-        ]
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Gnarled branches' creates a gothic, twisted image. 👂 **Auditory**: The 'piercing scream' breaks the silence, heightening the tension.",
+            rhetoric: "🎭 **Pathetic Fallacy**: The environment (moonlight, oak trees) reflects the internal fear of the characters, a key technique in SPGS creative writing.",
+            vocabulary: "📚 **Trembling**: A more precise verb than 'shaking', showing vulnerability. <br>📚 **Eerily**: An adverb that adds a supernatural layer to the silence."
+        }
     },
     {
-        title: "Abolish School Homework",
+        title: "2. Persuasive: Abolish Homework",
         content: "In my opinion, homework [0] abolished immediately. Firstly, students [1] enough time to rest after a [2] day. If a child [3] all day, they [4] a break. Furthermore, many [5] believe that homework [6] unnecessary stress. [7] a well-known fact that sleep is [8] than extra math. Some teachers [9] disagree, [10] the evidence is clear. Students [11] work more [12] in class if they are rested. In conclusion, [13] time to change [14] system.",
         errors: [
             { original: "should", options: ["should be", "must", "ought"], correct: "should be", type: "Grammar", note: "Passive voice needed." },
-            { original: "dont have", options: ["do not have", "doesn't have", "hasn't"], correct: "do not have", type: "Grammar", note: "Avoid contractions in formal writing." },
-            { original: "tiring", options: ["tiring", "tired", "tireing"], correct: "tiring", type: "Vocabulary Upgrade", note: "Descriptive adjective." },
-            { original: "studys", options: ["studies", "study", "studied"], correct: "studies", type: "Spelling", note: "Third person singular spelling." },
-            { original: "needed", options: ["need", "needs", "needing"], correct: "need", type: "Grammar", note: "Subject-verb agreement." },
-            { original: "parents", options: ["parents", "parent's", "parents'"], correct: "parents", type: "Punctuation", note: "No apostrophe for plural." },
-            { original: "cause", options: ["causes", "causing", "caused"], correct: "causes", type: "Grammar", note: "Homework is singular." },
-            { original: "Its", options: ["It is", "It's", "Its"], correct: "It is", type: "Grammar", note: "Formal tone without contractions." },
-            { original: "important", options: ["more important", "importanter", "most important"], correct: "more important", type: "Grammar", note: "Comparative degree." },
-            { original: "might", options: ["might", "may", "could"], correct: "might", type: "Vocabulary Upgrade", note: "Modal for possibility." },
-            { original: "but", options: ["; however,", "but", "so"], correct: "; however,", type: "Punctuation", note: "Advanced semicolon usage." },
-            { original: "will", options: ["would", "shall", "will"], correct: "would", type: "Grammar", note: "Conditional sentence." },
-            { original: "efficient", options: ["efficiently", "efficienter", "more efficient"], correct: "efficiently", type: "Grammar", note: "Adverb modifies 'work'." },
-            { original: "its", options: ["it's", "its", "there"], correct: "it's", type: "Punctuation", note: "Contraction of 'it is'." },
-            { original: "the schools", options: ["the school's", "the schools", "the school"], correct: "the school's", type: "Punctuation", note: "Possessive apostrophe." }
-        ]
+            { original: "dont have", options: ["do not have", "doesn't have", "hasn't"], correct: "do not have", type: "Grammar", note: "Formal tone." },
+            { original: "tired", options: ["exhausting", "tired", "tiring"], correct: "exhausting", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "studys", options: ["studies", "study", "studied"], correct: "studies", type: "Spelling", note: "Third person singular." },
+            { original: "needs", options: ["need", "needs", "needing"], correct: "need", type: "Grammar", note: "Subject-verb agreement." },
+            { original: "parent's", options: ["parents", "parent's", "parents'"], correct: "parents", type: "Punctuation", note: "No apostrophe for plural." },
+            { original: "cause", options: ["causes", "causing", "caused"], correct: "causes", type: "Grammar", note: "Homework is uncountable." },
+            { original: "Its", options: ["It is", "It's", "Its"], correct: "It is", type: "Grammar", note: "Formal tone." },
+            { original: "importanter", options: ["more important", "importanter", "most important"], correct: "more important", type: "Grammar", note: "Comparative form." },
+            { original: "maybe", options: ["might", "may", "could"], correct: "might", type: "Vocabulary Upgrade", note: "Formal modal." },
+            { original: "but", options: ["; however,", "but", "so"], correct: "; however,", type: "Punctuation", note: "Advanced semicolon." },
+            { original: "will", options: ["would", "shall", "will"], correct: "would", type: "Grammar", note: "Conditional." },
+            { original: "efficient", options: ["efficiently", "efficient", "more efficient"], correct: "efficiently", type: "Grammar", note: "Adverb." },
+            { original: "its", options: ["it is", "its", "it's"], correct: "it is", type: "Grammar", note: "Conclusion marker." },
+            { original: "schools", options: ["school's", "schools", "schools'"], correct: "school's", type: "Punctuation", note: "Possessive." }
+        ],
+        deepDive: {
+            sensory: "✋ **Tactile**: Mentions of 'tiring days' and 'rest' appeal to the physical well-being of the reader.",
+            rhetoric: "📢 **Logos**: Using phrases like 'evidence is clear' builds a logical argument, essential for high-scoring persuasive essays.",
+            vocabulary: "📚 **Abolished**: A much stronger word than 'stopped', used for laws or long-standing systems. <br>📚 **Efficiently**: Focuses on the quality of work rather than just the speed."
+        }
     },
     {
-        title: "Newspaper Report",
+        title: "3. Newspaper: Local Hero",
         content: "Yesterday, a [0] event occurred in our quiet town. A young girl, along with her dog, [1] a toddler from the icy river. Witnesses [2] that the water was [3] cold. 'I just did what anyone would do,' the girl [4]. However, the [5] parents were [6] grateful. The police [7] that the river [8] dangerous for weeks. Its [9] clear that more [10] is needed. There [11] many residents who [12] to see a fence installed. [13] the council has [14] ignored these [15] requests.",
         errors: [
-            { original: "big", options: ["colossal", "large", "big"], correct: "colossal", type: "Vocabulary Upgrade", note: "Ambitious adjective." },
-            { original: "were saving", options: ["saved", "was saving", "saves"], correct: "saved", type: "Grammar", note: "Past simple for reports." },
-            { original: "says", options: ["said", "say", "saying"], correct: "said", type: "Grammar", note: "Tense consistency." },
-            { original: "bitter", options: ["bitterly", "bitter", "bitterness"], correct: "bitterly", type: "Grammar", note: "Adverb needed." },
-            { original: "said", options: ["exclaimed", "whispered", "mumbled"], correct: "exclaimed", type: "Vocabulary Upgrade", note: "Show emotion in speech." },
-            { original: "toddlers", options: ["toddler's", "toddlers'", "toddlers"], correct: "toddler's", type: "Punctuation", note: "Singular possessive." },
-            { original: "truely", options: ["truly", "truely", "truley"], correct: "truly", type: "Spelling", note: "Drop the 'e'." },
-            { original: "claims", options: ["claimed", "claim", "claiming"], correct: "claimed", type: "Grammar", note: "Past tense consistency." },
-            { original: "is", options: ["has been", "was", "been"], correct: "has been", type: "Grammar", note: "Present perfect for duration." },
-            { original: "Its", options: ["It's", "Its", "It is"], correct: "It's", type: "Spelling", note: "Homophone contraction." },
-            { original: "practice", options: ["practice", "practise", "practising"], correct: "practice", type: "Spelling", note: "Practice (Noun) in UK." },
-            { original: "is", options: ["are", "was", "were"], correct: "are", type: "Grammar", note: "Plural subject (residents)." },
-            { original: "want", options: ["want", "wants", "wanted"], correct: "want", type: "Grammar", note: "Present state." },
-            { original: "However", options: ["; however,", ". However", "However"], correct: "; however,", type: "Punctuation", note: "Advanced sentence connector." },
-            { original: "allready", options: ["already", "all ready", "ready"], correct: "already", type: "Spelling", note: "One 'l'." }
-        ]
+            { original: "big", options: ["extraordinary", "big", "large"], correct: "extraordinary", type: "Vocabulary Upgrade", note: "Impact vocab." },
+            { original: "were saving", options: ["saved", "were saving", "saves"], correct: "saved", type: "Grammar", note: "Past simple." },
+            { original: "says", options: ["said", "says", "saying"], correct: "said", type: "Grammar", note: "Consistency." },
+            { original: "bitter", options: ["bitterly", "bitter", "bitterness"], correct: "bitterly", type: "Grammar", note: "Adverb." },
+            { original: "said", options: ["exclaimed", "said", "whispered"], correct: "exclaimed", type: "Vocabulary Upgrade", note: "Emotion vocab." },
+            { original: "toddlers", options: ["toddler's", "toddlers", "toddlers'"], correct: "toddler's", type: "Punctuation", note: "Possessive." },
+            { original: "truely", options: ["truly", "truely", "truley"], correct: "truly", type: "Spelling", note: "No 'e'." },
+            { original: "claims", options: ["claimed", "claims", "claiming"], correct: "claimed", type: "Grammar", note: "Consistency." },
+            { original: "is", options: ["has been", "is", "was"], correct: "has been", type: "Grammar", note: "Duration." },
+            { original: "Its", options: ["It's", "Its", "Its'"], correct: "It's", type: "Spelling", note: "Contraction." },
+            { original: "practise", options: ["practice", "practise", "practising"], correct: "practice", type: "Spelling", note: "Noun form." },
+            { original: "is", options: ["are", "is", "was"], correct: "are", type: "Grammar", note: "Plural subject." },
+            { original: "wants", options: ["want", "wants", "wanted"], correct: "want", type: "Grammar", note: "Subject agreement." },
+            { original: "However", options: ["; however,", "However", "but"], correct: "; however,", type: "Punctuation", note: "Transition." },
+            { original: "allready", options: ["already", "allready", "ready"], correct: "already", type: "Spelling", note: "One 'l'." },
+            { original: "requests", options: ["petitions", "requests", "asks"], correct: "petitions", type: "Vocabulary Upgrade", note: "Formal vocab." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: The 'icy river' provides a stark, dangerous setting for the rescue.",
+            rhetoric: "📰 **Journalistic Tone**: Using 'Witnesses claimed' and 'Police reported' adds authority and objectivity to the narrative.",
+            vocabulary: "📚 **Colossal**: A top-tier synonym for 'big' that conveys significance. <br>📚 **Petitions**: A formal word for requests, showing an understanding of civic action."
+        }
     },
     {
-        title: "Diary Entry",
+        title: "4. Diary Entry: Journey",
         content: "Dear Diary, Today [0] a [1] disaster. The [2] of students [3] waiting for the bus since 7 am. [4] it finally arrived, we [5] our bags inside. I [6] so [7]! The scenery [8] beautiful: the mountains [9] like giants. However, my [10] friend [11] to feel sick. I [12] him some water. I [13] I had [14] more careful. I [15] never forget this day.",
         errors: [
-            { original: "is", options: ["was", "is", "has been"], correct: "was", type: "Grammar", note: "Diaries record the past." },
-            { original: "total", options: ["complete", "total", "absolute"], correct: "complete", type: "Vocabulary Upgrade", note: "Ambitious vocab." },
-            { original: "group", options: ["group", "groups", "crowd"], correct: "group", type: "Grammar", note: "Collective noun." },
-            { original: "were", options: ["was", "are", "been"], correct: "was", type: "Grammar", note: "The group (singular) was." },
+            { original: "is", options: ["was", "is", "has been"], correct: "was", type: "Grammar", note: "Diary entries use past tense." },
+            { original: "total", options: ["complete", "total", "absolute"], correct: "complete", type: "Vocabulary Upgrade", note: "Ambitious adjective." },
+            { original: "group", options: ["group", "groups", "crowd"], correct: "group", type: "Grammar", note: "Subject identification." },
+            { original: "were", options: ["was", "are", "been"], correct: "was", type: "Grammar", note: "'Group' is a singular collective noun." },
             { original: "Where", options: ["When", "Where", "Which"], correct: "When", type: "Grammar", note: "Time conjunction." },
-            { original: "flung", options: ["flung", "flinged", "flinging"], correct: "flung", type: "Spelling", note: "Irregular past tense." },
+            { original: "flunged", options: ["flung", "flunged", "flinging"], correct: "flung", type: "Spelling", note: "Irregular past tense." },
             { original: "feel", options: ["felt", "feel", "feels"], correct: "felt", type: "Grammar", note: "Tense consistency." },
-            { original: "happy", options: ["ecstatic", "happy", "glad"], correct: "ecstatic", type: "Vocabulary Upgrade", note: "Emotion upgrade." },
-            { original: "is", options: ["was", "were", "is"], correct: "was", type: "Grammar", note: "Past tense description." },
-            { original: "stand", options: ["stood", "stands", "standing"], correct: "stood", type: "Grammar", note: "Past tense personification." },
-            { original: "best", options: ["closest", "best", "goodest"], correct: "closest", type: "Vocabulary Upgrade", note: "Precise adjective." },
-            { original: "begins", options: ["began", "begin", "begun"], correct: "began", type: "Grammar", note: "Past tense." },
+            { original: "happy", options: ["ecstatic", "happy", "glad"], correct: "ecstatic", type: "Vocabulary Upgrade", note: "Emotional vocabulary." },
+            { original: "is", options: ["was", "were", "is"], correct: "was", type: "Grammar", note: "Past description." },
+            { original: "stands", options: ["stood", "stands", "standing"], correct: "stood", type: "Grammar", note: "Past tense." },
+            { original: "good", options: ["closest", "good", "best"], correct: "closest", type: "Vocabulary Upgrade", note: "Precise word choice." },
+            { original: "begins", options: ["began", "begin", "begun"], correct: "began", type: "Grammar", note: "Irregular past tense." },
             { original: "give", options: ["gave", "gives", "giving"], correct: "gave", type: "Grammar", note: "Tense consistency." },
-            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Past regret." },
+            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Expressing regret." },
             { original: "be", options: ["been", "be", "being"], correct: "been", type: "Grammar", note: "Past participle." },
             { original: "will", options: ["shall", "will", "would"], correct: "shall", type: "Vocabulary Upgrade", note: "Formal future 'I shall'." }
-        ]
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: The mountains are described 'like giants' (Simile), giving the landscape a looming, majestic presence. 👂 **Auditory**: The early 7 am start implies a weary, quiet beginning to the day.",
+            rhetoric: "🎭 **Hyperbole**: Describing a bus delay as a 'complete disaster' shows the subjective, emotional nature of a personal diary.",
+            vocabulary: "📚 **Ecstatic**: Synonyms: *elated, euphoric*. Use this to show extreme joy beyond 'happy'. <br>📚 **Flung**: A dynamic verb that shows speed and lack of care compared to 'put'."
+        }
     },
     {
-        title: "Persuasive Speech",
+        title: "5. Speech: Plastic-Free School",
         content: "Fellow students, [0] we continue to ignore the [1] amount of plastic in our canteen? A [2] of plastic bottles [3] found every single day. [4] not just a local issue; [5] a global crisis. Each of us [6] to take action. Some students [7] that it is too hard to change, [8] they are mistaken. If we [9] our habits, we [10] save our planet. I [11] recommend that we [12] reusable bottles. Let us [13] sustainability. The [14] future is in [15] hands.",
         errors: [
-            { original: "shall", options: ["must", "shall", "can"], correct: "must", type: "Vocabulary Upgrade", note: "Strong persuasion." },
+            { original: "shall", options: ["must", "shall", "can"], correct: "must", type: "Vocabulary Upgrade", note: "Strong persuasive modal." },
             { original: "big", options: ["colossal", "big", "large"], correct: "colossal", type: "Vocabulary Upgrade", note: "Scale adjective." },
             { original: "mountain", options: ["mountain", "mountains", "pile"], correct: "mountain", type: "Vocabulary Upgrade", note: "Metaphor." },
-            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "Subject-verb agreement." },
+            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "Singular subject 'A mountain'." },
             { original: "Its", options: ["It is", "Its", "It's"], correct: "It is", type: "Grammar", note: "Formal speech tone." },
-            { original: "its", options: ["it is", "its", "it's"], correct: "it is", type: "Grammar", note: "Clarity." },
-            { original: "need", options: ["needs", "need", "needing"], correct: "needs", type: "Grammar", note: "'Each' is singular." },
-            { original: "believes", options: ["believe", "believes", "believing"], correct: "believe", type: "Grammar", note: "Plural subject." },
-            { original: "but", options: ["; however,", "but", "so"], correct: "; however,", type: "Punctuation", note: "Formal connection." },
+            { original: "it's", options: ["it is", "it's", "its"], correct: "it is", type: "Grammar", note: "Clarity." },
+            { original: "need", options: ["needs", "need", "needing"], correct: "needs", type: "Grammar", note: "'Each' is always singular." },
+            { original: "believes", options: ["believe", "believes", "believing"], correct: "believe", type: "Grammar", note: "Plural students." },
+            { original: "but", options: ["; however,", "but", "so"], correct: "; however,", type: "Punctuation", note: "Advanced sentence linker." },
             { original: "changed", options: ["change", "changed", "changing"], correct: "change", type: "Grammar", note: "First conditional." },
             { original: "will", options: ["will", "would", "shall"], correct: "will", type: "Grammar", note: "Predicting result." },
-            { original: "strongly", options: ["strongly", "strong", "stronger"], correct: "strongly", type: "Grammar", note: "Adverb." },
-            { original: "practise", options: ["practice", "practise", "practising"], correct: "practice", type: "Spelling", note: "Practice (Noun)." },
-            { original: "prioritize", options: ["prioritise", "priority", "prioritize"], correct: "prioritise", type: "Vocabulary Upgrade", note: "High-level verb." },
-            { original: "worlds", options: ["world's", "worlds", "worlds'"], correct: "world's", type: "Punctuation", note: "Possessive." },
+            { original: "strongly", options: ["strongly", "strong", "stronger"], correct: "strongly", type: "Grammar", note: "Adverb usage." },
+            { original: "practise", options: ["practice", "practise", "practising"], correct: "practice", type: "Spelling", note: "UK: Practice is the noun." },
+            { original: "prioritize", options: ["prioritise", "priority", "prioritize"], correct: "prioritise", type: "Vocabulary Upgrade", note: "Sophisticated verb." },
+            { original: "worlds", options: ["world's", "worlds", "worlds'"], correct: "world's", type: "Punctuation", note: "Possessive apostrophe." },
             { original: "there", options: ["their", "there", "they're"], correct: "their", type: "Spelling", note: "Possessive homophone." }
-        ]
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: The 'mountain of plastic bottles' provides a shocking image of waste that lingers in the audience's mind.",
+            rhetoric: "📢 **Rhetorical Question**: 'Must we continue to ignore...?' engages the audience immediately and forces them to take a side.",
+            vocabulary: "📚 **Colossal**: Synonyms: *gargantuan, immense*. Use for size that is intimidating. <br>📚 **Prioritise**: A formal verb essential for persuasive writing to show urgency."
+        }
     },
     {
-        title: "Information Leaflet",
+        title: "6. Leaflet: The Old Mill Museum",
         content: "The Old Mill [0] a [1] landmark since 1850. Visitors [2] enjoy the [3] atmosphere. A [4] of historical tools [5] displayed in the main hall. Please [6] that photography is not [7]. If you [8] any questions, our [9] staff [10] help you. The [11] toilet [12] located near the exit. It is [13] worth a visit! Our [14] [15] is to educate everyone.",
         errors: [
-            { original: "is", options: ["has been", "is", "was"], correct: "has been", type: "Grammar", note: "History duration." },
-            { original: "nice", options: ["magnificent", "nice", "good"], correct: "magnificent", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
+            { original: "is", options: ["has been", "is", "was"], correct: "has been", type: "Grammar", note: "Started in the past and continues." },
+            { original: "nice", options: ["magnificent", "nice", "good"], correct: "magnificent", type: "Vocabulary Upgrade", note: "Descriptive upgrade." },
             { original: "can", options: ["may", "can", "must"], correct: "may", type: "Vocabulary Upgrade", note: "Formal permission." },
-            { original: "quiet", options: ["tranquil", "quiet", "quite"], correct: "tranquil", type: "Vocabulary Upgrade", note: "Descriptive upgrade." },
-            { original: "collection", options: ["collection", "collections", "collect"], correct: "collection", type: "Grammar", note: "Noun usage." },
-            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "Collective singular." },
-            { original: "note", options: ["note", "notice", "noting"], correct: "note", type: "Grammar", note: "Imperative." },
+            { original: "quiet", options: ["tranquil", "quiet", "quite"], correct: "tranquil", type: "Vocabulary Upgrade", note: "Atmospheric upgrade." },
+            { original: "collection", options: ["collection", "collections", "collect"], correct: "collection", type: "Grammar", note: "Noun form." },
+            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "Singular collective noun." },
+            { original: "notice", options: ["note", "notice", "noting"], correct: "note", type: "Grammar", note: "Formal imperative." },
             { original: "alowed", options: ["allowed", "alowed", "aloud"], correct: "allowed", type: "Spelling", note: "Common spelling." },
-            { original: "had", options: ["have", "had", "has"], correct: "have", type: "Grammar", note: "Factual present." },
-            { original: "friendly", options: ["courteous", "friendly", "nice"], correct: "courteous", type: "Vocabulary Upgrade", note: "Professional vocab." },
-            { original: "will", options: ["shall", "will", "would"], correct: "shall", type: "Vocabulary Upgrade", note: "Formal tone." },
+            { original: "had", options: ["have", "had", "has"], correct: "have", type: "Grammar", note: "General factual present." },
+            { original: "friendly", options: ["courteous", "friendly", "nice"], correct: "courteous", type: "Vocabulary Upgrade", note: "Professional vocabulary." },
+            { original: "will", options: ["shall", "will", "would"], correct: "shall", type: "Vocabulary Upgrade", note: "Formal leaflet tone." },
             { original: "ladys", options: ["ladies'", "lady's", "ladys"], correct: "ladies'", type: "Punctuation", note: "Plural possessive." },
-            { original: "is", options: ["is", "are", "was"], correct: "is", type: "Grammar", note: "Subject-verb." },
-            { original: "definitly", options: ["definitely", "definately", "definatly"], correct: "definitely", type: "Spelling", note: "Spelling check." },
-            { original: "principals", options: ["principle", "principal", "principles"], correct: "principle", type: "Spelling", note: "Rule/Principle." },
-            { original: "aim", options: ["objective", "aim", "goal"], correct: "objective", type: "Vocabulary Upgrade", note: "Ambitious vocab." }
-        ]
+            { original: "is", options: ["is", "are", "was"], correct: "is", type: "Grammar", note: "Subject-verb agreement." },
+            { original: "definitly", options: ["definitely", "definately", "definatly"], correct: "definitely", type: "Spelling", note: "Spelling rule." },
+            { original: "principals", options: ["principle", "principal", "principles"], correct: "principle", type: "Spelling", note: "Principle = Rule." },
+            { original: "aim", options: ["objective", "aim", "goal"], correct: "objective", type: "Vocabulary Upgrade", note: "Formal aim." }
+        ],
+        deepDive: {
+            sensory: "👂 **Auditory**: 'Tranquil atmosphere' suggests a peaceful, quiet soundscape. ✋ **Tactile**: Historical tools imply a world of hard, manual labour.",
+            rhetoric: "🏛️ **Formal Tone**: Using 'Visitors may enjoy' and 'Please note' establishes a professional and welcoming authority.",
+            vocabulary: "📚 **Magnificent**: Synonyms: *splendid, resplendent*. Adds a sense of awe. <br>📚 **Courteous**: More professional than 'friendly' for staff descriptions."
+        }
     },
     {
-        title: "Formal Letter",
+        title: "7. Formal Letter: Toy Complaint",
         content: "Dear Sir or Madam, I am [0] to complain about a [1] robot I [2] last week. When I [3] the box, I [4] that the arm was [5]. [6] I was very [7]. Neither the lights [8] the sound [9] working. I [10] like a full [11]. I [12] my receipt as proof. I [13] to hearing from you [14]. [15] faithfully, John Smith.",
         errors: [
-            { original: "writing", options: ["writing", "writting", "writeing"], correct: "writing", type: "Spelling", note: "Spelling check." },
-            { original: "defective", options: ["defective", "broken", "bad"], correct: "defective", type: "Vocabulary Upgrade", note: "Formal vocab." },
-            { original: "buy", options: ["bought", "buyed", "boughten"], correct: "bought", type: "Grammar", note: "Irregular past." },
-            { original: "open", options: ["opened", "open", "opening"], correct: "opened", type: "Grammar", note: "Past tense." },
-            { original: "discover", options: ["discovered", "discover", "discovering"], correct: "discovered", type: "Grammar", note: "Consistency." },
-            { original: "loose", options: ["loose", "lose", "losing"], correct: "loose", type: "Spelling", note: "Not tight." },
+            { original: "writting", options: ["writing", "writting", "writeing"], correct: "writing", type: "Spelling", note: "Spelling of 'writing'." },
+            { original: "broken", options: ["defective", "broken", "bad"], correct: "defective", type: "Vocabulary Upgrade", note: "Formal term." },
+            { original: "buy", options: ["bought", "buyed", "boughten"], correct: "bought", type: "Grammar", note: "Irregular past tense." },
+            { original: "open", options: ["opened", "open", "opening"], correct: "opened", type: "Grammar", note: "Tense consistency." },
+            { original: "discover", options: ["discovered", "discover", "discovering"], correct: "discovered", type: "Grammar", note: "Past tense." },
+            { original: "lose", options: ["loose", "lose", "losing"], correct: "loose", type: "Spelling", note: "Loose = not tight." },
             { original: "Consequently", options: ["; consequently,", "Consequently", "So"], correct: "; consequently,", type: "Punctuation", note: "Advanced connector." },
             { original: "sad", options: ["disappointed", "sad", "unhappy"], correct: "disappointed", type: "Vocabulary Upgrade", note: "Formal emotion." },
             { original: "or", options: ["nor", "or", "and"], correct: "nor", type: "Grammar", note: "Neither...nor." },
-            { original: "was", options: ["were", "was", "is"], correct: "were", type: "Grammar", note: "Plural agreement." },
+            { original: "was", options: ["were", "was", "is"], correct: "were", type: "Grammar", note: "Plural subjects." },
             { original: "want", options: ["would like", "want", "require"], correct: "would like", type: "Vocabulary Upgrade", note: "Formal request." },
-            { original: "refund", options: ["reimbursement", "refund", "money"], correct: "reimbursement", type: "Vocabulary Upgrade", note: "Ambitious vocab." },
-            { original: "enclosed", options: ["have enclosed", "enclosed", "enclose"], correct: "have enclosed", type: "Grammar", note: "Present perfect." },
-            { original: "look forward", options: ["look forward", "looking forward", "looked"], correct: "look forward", type: "Grammar", note: "Standard phrase." },
-            { original: "soon", options: ["promptly", "soon", "quick"], correct: "promptly", type: "Vocabulary Upgrade", note: "Professional vocab." },
-            { original: "Yours", options: ["Yours", "Your's", "Yours'"], correct: "Yours", type: "Punctuation", note: "No apostrophe." }
-        ]
+            { original: "refund", options: ["reimbursement", "refund", "money"], correct: "reimbursement", type: "Vocabulary Upgrade", note: "Sophisticated vocab." },
+            { original: "enclosed", options: ["have enclosed", "enclosed", "enclose"], correct: "have enclosed", type: "Grammar", note: "Present perfect state." },
+            { original: "look forward", options: ["look forward", "looking forward", "looked"], correct: "look forward", type: "Grammar", note: "Formal phrase." },
+            { original: "soon", options: ["promptly", "soon", "quick"], correct: "promptly", type: "Vocabulary Upgrade", note: "Professional tone." },
+            { original: "Your's", options: ["Yours", "Your's", "Yours'"], correct: "Yours", type: "Punctuation", note: "No apostrophe." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Defective robot' and 'loose arm' provide clear evidence of the problem.",
+            rhetoric: "⚖️ **Formal Structure**: Using connectors like 'Consequently' and 'Furthermore' builds a professional, serious argument for a refund.",
+            vocabulary: "📚 **Defective**: A precise technical term for 'broken'. <br>📚 **Promptly**: Shows a formal expectation for speed in a business context."
+        }
     },
     {
-        title: "Descriptive Writing",
+        title: "8. Descriptive: A Stormy Night",
         content: "The sky [0] a [1] shade of purple. Lightning [2] across the sky like [3]. The [4] of the thunder [5] the [6] house. Inside, I [7] by the fire. The [8] wind [9] through the cracks. Suddenly, the [10] [11] out. I was [12]. I [13] I [14] stayed at my [15] house.",
         errors: [
-            { original: "was", options: ["became", "was", "is"], correct: "became", type: "Vocabulary Upgrade", note: "Dynamic verb." },
-            { original: "dark", options: ["menacing", "dark", "scary"], correct: "menacing", type: "Vocabulary Upgrade", note: "Atmospheric vocab." },
-            { original: "dance", options: ["danced", "dances", "dancing"], correct: "danced", type: "Grammar", note: "Descriptive past." },
+            { original: "is", options: ["became", "was", "is"], correct: "became", type: "Vocabulary Upgrade", note: "Dynamic verb." },
+            { original: "dark", options: ["menacing", "dark", "scary"], correct: "menacing", type: "Vocabulary Upgrade", note: "Mood adjective." },
+            { original: "dance", options: ["danced", "dances", "dancing"], correct: "danced", type: "Grammar", note: "Past tense." },
             { original: "fingers", options: ["jagged fingers", "fingers", "lines"], correct: "jagged fingers", type: "Vocabulary Upgrade", note: "Personification." },
             { original: "sound", options: ["reverberation", "sound", "boom"], correct: "reverberation", type: "Vocabulary Upgrade", note: "Sensory vocab." },
-            { original: "shake", options: ["shook", "shaked", "shaken"], correct: "shook", type: "Grammar", note: "Irregular past." },
-            { original: "fragile", options: ["vulnerable", "fragile", "weak"], correct: "vulnerable", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
-            { original: "sit", options: ["was sitting", "sat", "sit"], correct: "was sitting", type: "Grammar", note: "Background action." },
+            { original: "shaked", options: ["shook", "shaked", "shaken"], correct: "shook", type: "Grammar", note: "Irregular past." },
+            { original: "fragile", options: ["vulnerable", "fragile", "weak"], correct: "vulnerable", type: "Vocabulary Upgrade", note: "Precise vocab." },
+            { original: "sit", options: ["was sitting", "sat", "sit"], correct: "was sitting", type: "Grammar", note: "Past background." },
             { original: "cold", options: ["biting", "cold", "freezing"], correct: "biting", type: "Vocabulary Upgrade", note: "Sensory upgrade." },
-            { original: "whistle", options: ["whistled", "whistling", "whistles"], correct: "whistled", type: "Grammar", note: "Consistency." },
-            { original: "light", options: ["lights", "light", "lighting"], correct: "lights", type: "Grammar", note: "Noun number." },
+            { original: "whistle", options: ["whistled", "whistling", "whistles"], correct: "whistled", type: "Grammar", note: "Past tense." },
+            { original: "light", options: ["lights", "light", "lighting"], correct: "lights", type: "Grammar", note: "Plural noun." },
             { original: "go", options: ["went", "gone", "goes"], correct: "went", type: "Grammar", note: "Past tense." },
-            { original: "scared", options: ["petrified", "scared", "afraid"], correct: "petrified", type: "Vocabulary Upgrade", note: "Intense vocab." },
-            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Past regret." },
+            { original: "scared", options: ["petrified", "scared", "afraid"], correct: "petrified", type: "Vocabulary Upgrade", note: "Intensity." },
+            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Expressing regret." },
             { original: "had", options: ["had", "have", "would"], correct: "had", type: "Grammar", note: "Past perfect." },
             { original: "grandmothers", options: ["grandmother's", "grandmothers'", "grandmothers"], correct: "grandmother's", type: "Punctuation", note: "Possessive." }
-        ]
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Menacing shade of purple' uses color to create an ominous mood. 👂 **Auditory**: 'Reverberation of thunder' is more immersive than 'noise'.",
+            rhetoric: "🎭 **Personification**: Lightning dancing like 'jagged fingers' makes the storm feel like a living, attacking force.",
+            vocabulary: "📚 **Petrified**: Synonyms: *frozen, terrified*. Shows fear so intense you cannot move. <br>📚 **Vulnerable**: A high-level word for 'weak' or 'exposed'."
+        }
     },
     {
-        title: "Book Review",
+        title: "9. Book Review: Secret Kingdom",
         content: "I have [0] read an [1] book called 'The Secret Kingdom'. The [2] is [3] and [4]. The main [5], [6] is a brave girl, [7] to save her [8]. One of the best [9] [10] the [11] scene. However, the [12] could be [13]. Overall, [14] a [15] read.",
         errors: [
-            { original: "just", options: ["recently", "just", "now"], correct: "recently", type: "Vocabulary Upgrade", note: "Formal vocab." },
+            { original: "just", options: ["recently", "just", "now"], correct: "recently", type: "Vocabulary Upgrade", note: "Formal vocabulary." },
             { original: "excellent", options: ["extraordinary", "excellent", "good"], correct: "extraordinary", type: "Vocabulary Upgrade", note: "Impactful vocab." },
-            { original: "story", options: ["narrative", "story", "plot"], correct: "narrative", type: "Vocabulary Upgrade", note: "Literary vocab." },
+            { original: "story", options: ["narrative", "story", "plot"], correct: "narrative", type: "Vocabulary Upgrade", note: "Literary term." },
             { original: "exciting", options: ["exhilarating", "exciting", "fun"], correct: "exhilarating", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
-            { original: "fast", options: ["fast-paced", "fast", "quick"], correct: "fast-paced", type: "Punctuation", note: "Compound hyphen." },
-            { original: "person", options: ["protagonist", "person", "character"], correct: "protagonist", type: "Vocabulary Upgrade", note: "Literary term." },
+            { original: "fast-paced", options: ["fast-paced", "fast", "quick"], correct: "fast-paced", type: "Punctuation", note: "Compound hyphen." },
+            { original: "person", options: ["protagonist", "person", "character"], correct: "protagonist", type: "Vocabulary Upgrade", note: "Literary vocab." },
             { original: "who", options: ["who", "whom", "which"], correct: "who", type: "Grammar", note: "Subject pronoun." },
-            { original: "try", options: ["tries", "try", "trying"], correct: "tries", type: "Grammar", note: "Subject-verb." },
+            { original: "try", options: ["tries", "try", "trying"], correct: "tries", type: "Grammar", note: "Subject-verb agreement." },
             { original: "country", options: ["realm", "country", "place"], correct: "realm", type: "Vocabulary Upgrade", note: "Setting vocab." },
             { original: "part", options: ["chapters", "part", "scenes"], correct: "chapters", type: "Vocabulary Upgrade", note: "Specific vocab." },
-            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "One of...is." },
+            { original: "are", options: ["is", "are", "were"], correct: "is", type: "Grammar", note: "'One' is singular." },
             { original: "climax", options: ["climactic", "climax", "ending"], correct: "climactic", type: "Grammar", note: "Adjective form." },
-            { original: "ending", options: ["conclusion", "ending", "end"], correct: "conclusion", type: "Vocabulary Upgrade", note: "Formal conclusion." },
+            { original: "ending", options: ["conclusion", "ending", "end"], correct: "conclusion", type: "Vocabulary Upgrade", note: "Formal term." },
             { original: "better", options: ["more compelling", "better", "gooder"], correct: "more compelling", type: "Vocabulary Upgrade", note: "Evaluative vocab." },
             { original: "its", options: ["it's", "its", "there"], correct: "it's", type: "Spelling", note: "Contraction." },
-            { original: "great", options: ["captivating", "great", "nice"], correct: "captivating", type: "Vocabulary Upgrade", note: "Final impact." }
-        ]
+            { original: "great", options: ["captivating", "great", "nice"], correct: "captivating", type: "Vocabulary Upgrade", note: "Vocab." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Leather-bound' and 'gilded' books suggest a world of classic, hidden knowledge.",
+            rhetoric: "📖 **Critical Analysis**: Moving from 'plot' to 'narrative' shows an understanding of how a story is constructed, not just what happens.",
+            vocabulary: "📚 **Exhilarating**: Synonyms: *thrilling, breathtaking*. Captures the high-energy excitement of a good book. <br>📚 **Protagonist**: The academic term for a main character."
+        }
     },
     {
-        title: "Biography",
+        title: "10. Biography: Thomas Edison",
         content: "Thomas Edison was a [0] inventor. He [1] many [2] things. His [3] of inventions [4] the lightbulb. Although he [5] many [6], he never [7] up. 'Genius is 1% inspiration and 99% perspiration,' he [8]. [9] a [10] known fact that he [11] over 1,000 patents. Every [12] of his [13] [14] a story of [15].",
         errors: [
-            { original: "good", options: ["prolific", "good", "famous"], correct: "prolific", type: "Vocabulary Upgrade", note: "Impact adjective." },
-            { original: "creates", options: ["created", "creates", "create"], correct: "created", type: "Grammar", note: "Past biography." },
+            { original: "good", options: ["prolific", "good", "famous"], correct: "prolific", type: "Vocabulary Upgrade", note: "Specific inventor vocab." },
+            { original: "creates", options: ["created", "creates", "create"], correct: "created", type: "Grammar", note: "Biographies use past tense." },
             { original: "new", options: ["innovative", "new", "cool"], correct: "innovative", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
-            { original: "list", options: ["catalogue", "list", "array"], correct: "catalogue", type: "Vocabulary Upgrade", note: "Formal list." },
-            { original: "include", options: ["includes", "include", "including"], correct: "includes", type: "Grammar", note: "Subject-verb." },
-            { original: "has", options: ["had", "has", "have"], correct: "had", type: "Grammar", note: "Consistency." },
+            { original: "list", options: ["catalogue", "list", "array"], correct: "catalogue", type: "Vocabulary Upgrade", note: "Formal vocab." },
+            { original: "include", options: ["includes", "include", "including"], correct: "includes", type: "Grammar", note: "Singular subject 'catalogue'." },
+            { original: "has", options: ["had", "has", "have"], correct: "had", type: "Grammar", note: "Tense consistency." },
             { original: "failure", options: ["failures", "failure", "fails"], correct: "failures", type: "Grammar", note: "Noun number." },
-            { original: "give", options: ["gave", "gives", "given"], correct: "gave", type: "Grammar", note: "Past tense." },
-            { original: "said", options: ["remarked", "said", "told"], correct: "remarked", type: "Vocabulary Upgrade", note: "Vocab upgrade." },
-            { original: "Its", options: ["It is", "Its", "It's"], correct: "It is", type: "Grammar", note: "Formal tone." },
+            { original: "give", options: ["gave", "gives", "given"], correct: "gave", type: "Grammar", note: "Irregular past." },
+            { original: "said", options: ["remarked", "said", "told"], correct: "remarked", type: "Vocabulary Upgrade", note: "Dialogue upgrade." },
+            { original: "Its", options: ["It is", "Its", "It's"], correct: "It is", type: "Grammar", note: "Formal writing tone." },
             { original: "well", options: ["widely", "well", "good"], correct: "widely", type: "Grammar", note: "Adverb choice." },
-            { original: "hold", options: ["held", "holds", "hold"], correct: "held", type: "Grammar", note: "Past fact." },
-            { original: "one", options: ["aspect", "one", "part"], correct: "aspect", type: "Vocabulary Upgrade", note: "Detailed vocab." },
-            { original: "work", options: ["work", "works", "working"], correct: "work", type: "Grammar", note: "Uncountable." },
-            { original: "tell", options: ["tells", "tell", "telling"], correct: "tells", type: "Grammar", note: "Subject-verb." },
+            { original: "hold", options: ["held", "holds", "hold"], correct: "held", type: "Grammar", note: "Past tense." },
+            { original: "one", options: ["aspect", "one", "part"], correct: "aspect", type: "Vocabulary Upgrade", note: "Detailed description." },
+            { original: "work", options: ["work", "works", "working"], correct: "work", type: "Grammar", note: "Uncountable noun." },
+            { original: "tell", options: ["tells", "tell", "telling"], correct: "tells", type: "Grammar", note: "Subject-verb agreement." },
             { original: "persistance", options: ["persistence", "persistance", "persistency"], correct: "persistence", type: "Spelling", note: "Spelling: -ence." }
-        ]
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: The 'lightbulb' and '1,000 patents' provide concrete images of success.",
+            rhetoric: "📜 **Ethos**: Quoting Edison directly builds the credibility of the biography and inspires the reader.",
+            vocabulary: "📚 **Prolific**: Synonyms: *productive, fertile*. Essential for describing great inventors or artists. <br>📚 **Persistence**: The formal noun for 'keeping on going'."
+        }
+    },
+    {
+        title: "11. The Abandoned Clock Tower",
+        content: "High above the [0] town, the clock tower [1] like a [2] sentinel. Its iron face, [3] by decades of [4] rain, looked down [5] at the cobbled streets. Inside, the [6] of dust [7] in the [8] light. Time [9] to have [10] here; however, the [11] of the wind [12] through the rafters. Neither the gears [13] the heavy pendulum [14] anymore.",
+        errors: [
+            { original: "sleeping", options: ["slumbering", "sleeping", "sleepy"], correct: "slumbering", type: "Vocabulary Upgrade", note: "Slumbering implies a poetic stillness." },
+            { original: "standed", options: ["stood", "standed", "stands"], correct: "stood", type: "Grammar", note: "Past tense of 'stand' is 'stood'." },
+            { original: "lonely", options: ["solitary", "lonely", "alone"], correct: "solitary", type: "Vocabulary Upgrade", note: "Solitary sounds more formal." },
+            { original: "scared", options: ["scarred", "scared", "skared"], correct: "scarred", type: "Spelling", note: "Scarred (marks) vs Scared (fear)." },
+            { original: "persistant", options: ["persistent", "persistant", "persistante"], correct: "persistent", type: "Spelling", note: "Ends in -ent." },
+            { original: "mournful", options: ["mournfully", "mournful", "mourning"], correct: "mournfully", type: "Grammar", note: "Adverb modifies 'looked'." },
+            { original: "specks", options: ["motes", "specks", "bits"], correct: "motes", type: "Vocabulary Upgrade", note: "Sophisticated literary term." },
+            { original: "dance", options: ["danced", "dance", "dancing"], correct: "danced", type: "Grammar", note: "Past tense narrative." },
+            { original: "golden", options: ["amber", "golden", "yellow"], correct: "amber", type: "Vocabulary Upgrade", note: "Suggests rich, aged light." },
+            { original: "seems", options: ["seemed", "seems", "seeming"], correct: "seemed", type: "Grammar", note: "Consistency." },
+            { original: "froze", options: ["frozen", "froze", "freezed"], correct: "frozen", type: "Grammar", note: "Past participle." },
+            { original: "sigh's", options: ["sighs", "sies", "sigh's"], correct: "sighs", type: "Punctuation", note: "No apostrophe for plural." },
+            { original: "whispering", options: ["whispered", "whispering", "whisper"], correct: "whispered", type: "Grammar", note: "Past simple verb." },
+            { original: "or", options: ["nor", "or", "and"], correct: "nor", type: "Grammar", note: "Neither/nor." },
+            { original: "moved", options: ["stirred", "moved", "moving"], correct: "stirred", type: "Vocabulary Upgrade", note: "Precise movement." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Amber light' creates a fossilized feel. 👂 **Auditory**: 'Sighs of the wind' personifies the setting.",
+            rhetoric: "🎭 **Personification**: The tower as a 'solitary sentinel' gives it a watchful, living character.",
+            vocabulary: "📚 **Slumbering**: More evocative than 'sleeping'. <br>📚 **Motes**: A high-level word for tiny particles in light."
+        }
+    },
+    {
+        title: "12. The Unexpected Guest",
+        content: "A [0] knock [1] the [2] silence of the library. Mr. Higgins, [3] was [4] deep in an [5] manuscript, [6] his glasses. At the door stood a [7] figure, [8] in a [9] cloak. 'I [10] you wouldn't come,' he [11], his voice [12] like dry leaves. The stranger [13] a silver coin; [14] was [15] cold.",
+        errors: [
+            { original: "sharp", options: ["peremptory", "sharp", "loud"], correct: "peremptory", type: "Vocabulary Upgrade", note: "Commanding attention." },
+            { original: "shatter", options: ["shattered", "shatter", "shattering"], correct: "shattered", type: "Grammar", note: "Past simple action." },
+            { original: "heavy", options: ["profound", "heavy", "deep"], correct: "profound", type: "Vocabulary Upgrade", note: "More academic term." },
+            { original: "which", options: ["who", "which", "whom"], correct: "who", type: "Grammar", note: "Who for people." },
+            { original: "buryed", options: ["buried", "buryed", "burying"], correct: "buried", type: "Spelling", note: "Spelling check." },
+            { original: "old", options: ["ancient", "old", "antique"], correct: "ancient", type: "Vocabulary Upgrade", note: "Suggests extreme age." },
+            { original: "adjusting", options: ["adjusted", "adjusting", "adjusts"], correct: "adjusted", type: "Grammar", note: "Past simple main verb." },
+            { original: "small", options: ["diminutive", "small", "tiny"], correct: "diminutive", type: "Vocabulary Upgrade", note: "Literary term for small." },
+            { original: "wrapped", options: ["shrouded", "wrapped", "covered"], correct: "shrouded", type: "Vocabulary Upgrade", note: "Adds mystery." },
+            { original: "tatered", options: ["tattered", "tatered", "tattred"], correct: "tattered", type: "Spelling", note: "Double 't'." },
+            { original: "guessed", options: ["surmised", "guessed", "thought"], correct: "surmised", type: "Vocabulary Upgrade", note: "Formal inference." },
+            { original: "said", options: ["rasped", "said", "mumbled"], correct: "rasped", type: "Vocabulary Upgrade", note: "Matches the dry leaves simile." },
+            { original: "crackling", options: ["crackling", "cracking", "crackly"], correct: "crackling", type: "Vocabulary Upgrade", note: "Sensory detail." },
+            { original: "gave", options: ["proffered", "gave", "offered"], correct: "proffered", type: "Vocabulary Upgrade", note: "Formal act of giving." },
+            { original: "they", options: ["it", "they", "he"], correct: "it", type: "Grammar", note: "Matches 'a coin'." },
+            { original: "bitter", options: ["bitterly", "bitter", "bitterness"], correct: "bitterly", type: "Grammar", note: "Adverb needed." }
+        ],
+        deepDive: {
+            sensory: "✋ **Tactile**: 'Bitterly cold' coin adds an unsettling vibe. 👂 **Auditory**: 'Rasped' mirrors the sound of dry leaves.",
+            rhetoric: "📖 **Simile**: 'Voice crackling like dry leaves' links the guest to decay and mystery.",
+            vocabulary: "📚 **Peremptory**: A high-level SPGS word for an bossy or urgent command."
+        }
+    },
+    {
+        title: "13. A Storm at Sea",
+        content: "The ocean was no longer [0]; it had [1] into a [2] beast. [3] waves [4] against the [5] hull of our small boat. Rain [6] down, [7] our vision. 'Hold on [8]' [9] the captain over the [10] of the gale. Every [11] of wood [12] as if it might [13]. I [14] I was back on [15] ground.",
+        errors: [
+            { original: "calm", options: ["placid", "calm", "still"], correct: "placid", type: "Vocabulary Upgrade", note: "Placid is more formal." },
+            { original: "transformed", options: ["metamorphosed", "transformed", "changed"], correct: "metamorphosed", type: "Vocabulary Upgrade", note: "Radical change." },
+            { original: "angry", options: ["ferocious", "angry", "mean"], correct: "ferocious", type: "Vocabulary Upgrade", note: "More vivid." },
+            { original: "Huge", options: ["Mountainous", "Huge", "Big"], correct: "Mountainous", type: "Vocabulary Upgrade", note: "Great for wave height." },
+            { original: "battered", options: ["hammered", "battered", "hit"], correct: "hammered", type: "Vocabulary Upgrade", note: "Aggressive verb." },
+            { original: "weak", options: ["frail", "weak", "thin"], correct: "frail", type: "Vocabulary Upgrade", note: "Suggests fragility." },
+            { original: "poured", options: ["cascaded", "poured", "fell"], correct: "cascaded", type: "Vocabulary Upgrade", note: "Water movement." },
+            { original: "hiding", options: ["obscuring", "hiding", "blocking"], correct: "obscuring", type: "Vocabulary Upgrade", note: "Formal upgrade." },
+            { original: "tight", options: ["tightly", "tight", "tighter"], correct: "tightly", type: "Grammar", note: "Adverb." },
+            { original: "belowed", options: ["bellowed", "belowed", "bellow"], correct: "bellowed", type: "Spelling", note: "Double 'l'." },
+            { original: "roar", options: ["crescendo", "roar", "noise"], correct: "crescendo", type: "Vocabulary Upgrade", note: "Rising volume." },
+            { original: "plank", options: ["timber", "plank", "piece"], correct: "timber", type: "Vocabulary Upgrade", note: "Nautical wood." },
+            { original: "grown", options: ["groaned", "grown", "grone"], correct: "groaned", type: "Spelling", note: "Homophone." },
+            { original: "shater", options: ["shatter", "shater", "shatere"], correct: "shatter", type: "Spelling", note: "Double 't'." },
+            { original: "wish", options: ["wished", "wish", "wishing"], correct: "wished", type: "Grammar", note: "Past regret." },
+            { original: "stable", options: ["solid", "stable", "flat"], correct: "solid", type: "Vocabulary Upgrade", note: "Solid ground." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Mountainous' waves show terrifying scale. 👂 **Auditory**: 'Crescendo' is a musical term for rising volume.",
+            rhetoric: "🎭 **Metaphor**: Comparing the ocean to a 'ferocious beast' makes it an active enemy.",
+            vocabulary: "📚 **Metamorphosed**: Synonyms: transfigured. Indicates a total change in essence."
+        }
+    },
+    {
+        title: "14. New World First Day",
+        content: "The [0] sky of Planet X3 [1] with [2] clouds. I stepped out, my boots [3] in the [4] soil. The [5] was [6] and [7] of lavender. Strange [8], [9] were neither birds [10] insects, [11] above the [12] trees. Everything felt [13]; I [14] if I [15] ever return home.",
+        errors: [
+            { original: "pink", options: ["crimson", "pink", "red"], correct: "crimson", type: "Vocabulary Upgrade", note: "Vivid color choice." },
+            { original: "swirling", options: ["swirled", "swirling", "swirld"], correct: "swirled", type: "Grammar", note: "Past simple." },
+            { original: "violet", options: ["iridescent", "violet", "shiny"], correct: "iridescent", type: "Vocabulary Upgrade", note: "Rainbow-like." },
+            { original: "sinked", options: ["sinking", "sinked", "sank"], correct: "sinking", type: "Grammar", note: "Participle description." },
+            { original: "soft", options: ["porous", "soft", "spongy"], correct: "porous", type: "Vocabulary Upgrade", note: "Scientific texture." },
+            { original: "atmosfere", options: ["atmosphere", "atmosfear", "atmosfere"], correct: "atmosphere", type: "Spelling", note: "Spell with 'ph'." },
+            { original: "thick", options: ["dense", "thick", "heavy"], correct: "dense", type: "Vocabulary Upgrade", note: "Precise air quality." },
+            { original: "smelled", options: ["fragrant", "smelled", "scented"], correct: "fragrant", type: "Vocabulary Upgrade", note: "Sensory upgrade." },
+            { original: "creature's", options: ["creatures", "creature's", "creatur's"], correct: "creatures", type: "Punctuation", note: "Simple plural." },
+            { original: "who", options: ["which", "who", "whom"], correct: "which", type: "Grammar", note: "Which for unknown things." },
+            { original: "or", options: ["nor", "or", "and"], correct: "nor", type: "Grammar", note: "Neither/nor." },
+            { original: "hover", options: ["hovered", "hovering", "hover"], correct: "hovered", type: "Grammar", note: "Past simple." },
+            { original: "clear", options: ["crystalline", "clear", "glassy"], correct: "crystalline", type: "Vocabulary Upgrade", note: "Alien beauty." },
+            { original: "strange", options: ["otherworldly", "strange", "alien"], correct: "otherworldly", type: "Vocabulary Upgrade", note: "Beyond Earth." },
+            { original: "wandered", options: ["wondered", "wandered", "wunder"], correct: "wondered", type: "Spelling", note: "Thought vs Walked." },
+            { original: "shall", options: ["would", "shall", "will"], correct: "would", type: "Grammar", note: "Future-in-the-past." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: Surreal palette with 'Crimson' and 'Iridescent'. 👃 **Olfactory**: Lavender scent provides a weird contrast.",
+            rhetoric: "🎭 **Juxtaposition**: Describing things by what they AREN'T ('neither birds nor insects') adds mystery.",
+            vocabulary: "📚 **Crystalline**: Synonyms: limpid. Suggests clarity and complex structure."
+        }
+    },
+    {
+        title: "15. A Childhood Memory",
+        content: "The attic was a [0] of [1] memories. There, [2] in a [3] corner, was my [4] teddy bear. Its fur, [5] soft and [6], was now [7] and [8]. I [9] it up [10]. Suddenly, [11] of [12] flooded back. It [13] not just a toy [14] it was a [15] to my past.",
+        errors: [
+            { original: "place", options: ["treasure-trove", "place", "room"], correct: "treasure-trove", type: "Vocabulary Upgrade", note: "Rich collection." },
+            { original: "lost", options: ["discarded", "lost", "forgotten"], correct: "discarded", type: "Vocabulary Upgrade", note: "Cast aside." },
+            { original: "sitting", options: ["nestled", "sitting", "placed"], correct: "nestled", type: "Vocabulary Upgrade", note: "Adds comfort." },
+            { original: "shadowy", options: ["obscure", "shadowy", "dark"], correct: "obscure", type: "Vocabulary Upgrade", note: "Hard to see." },
+            { original: "favourite", options: ["beloved", "favourite", "liked"], correct: "beloved", type: "Vocabulary Upgrade", note: "Emotional depth." },
+            { original: "once", options: ["formerly", "once", "past"], correct: "formerly", type: "Vocabulary Upgrade", note: "Formal adverb." },
+            { original: "shiny", options: ["lustrous", "shiny", "bright"], correct: "lustrous", type: "Vocabulary Upgrade", note: "High-quality fur." },
+            { original: "mated", options: ["matted", "mated", "mating"], correct: "matted", type: "Spelling", note: "Tangled hair." },
+            { original: "dirty", options: ["weather-beaten", "dirty", "grimy"], correct: "weather-beaten", type: "Vocabulary Upgrade", note: "Shows age." },
+            { original: "took", options: ["retrieved", "took", "lifted"], correct: "retrieved", type: "Vocabulary Upgrade", note: "Getting back." },
+            { original: "gentle", options: ["gently", "gentle", "gentlely"], correct: "gently", type: "Grammar", note: "Adverb." },
+            { original: "waves", options: ["torrents", "waves", "bits"], correct: "torrents", type: "Vocabulary Upgrade", note: "Overwhelming flow." },
+            { original: "nostalga", options: ["nostalgia", "nostalga", "nostalgea"], correct: "nostalgia", type: "Spelling", note: "Ends in -ia." },
+            { original: "is", options: ["was", "is", "were"], correct: "was", type: "Grammar", note: "Past consistency." },
+            { original: "but", options: ["; rather,", "but", "so"], correct: "; rather,", type: "Punctuation", note: "Advanced contrast." },
+            { original: "link", options: ["conduit", "link", "bridge"], correct: "conduit", type: "Vocabulary Upgrade", note: "A channel." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Lustrous' vs 'Matted' fur shows the passage of time. ✋ **Tactile**: 'Weather-beaten' texture suggests history.",
+            rhetoric: "🏺 **Metaphor**: Attic as a 'treasure-trove'. The toy as a 'conduit' (channel) to the past.",
+            vocabulary: "📚 **Retrieved**: More formal than 'picked up'. Suggests finding something valued."
+        }
+    },
+    {
+        title: "16. Market at Midnight",
+        content: "The market, [0] during the day, was now [1] silent. The [2] of [3] fruit [4] in the damp air. Shadows [5] along the walls [6] like [7] ghosts. A [8] [9] through the [10] stalls. [11] the cats [12] to hunt. It was a [13] [14] [15].",
+        errors: [
+            { original: "busy", options: ["bustling", "busy", "crowded"], correct: "bustling", type: "Vocabulary Upgrade", note: "Market classic." },
+            { original: "erily", options: ["eerily", "erily", "eeryly"], correct: "eerily", type: "Spelling", note: "Double e and double i." },
+            { original: "smell", options: ["aroma", "smell", "scent"], correct: "aroma", type: "Vocabulary Upgrade", note: "Relates to food." },
+            { original: "bad", options: ["putrefying", "bad", "rotten"], correct: "putrefying", type: "Vocabulary Upgrade", note: "Scientific rotting." },
+            { original: "linger", options: ["lingered", "linger", "lingering"], correct: "lingered", type: "Grammar", note: "Past simple." },
+            { original: "crept", options: ["slithered", "crept", "moved"], correct: "slithered", type: "Vocabulary Upgrade", note: "Sinister feel." },
+            { original: "while", options: ["and", "while", "but"], correct: "and", type: "Grammar", note: "Simple joiner." },
+            { original: "thin", options: ["ethereal", "thin", "pale"], correct: "ethereal", type: "Vocabulary Upgrade", note: "Ghostly light." },
+            { original: "lonely", options: ["solitary", "lonely", "alone"], correct: "solitary", type: "Vocabulary Upgrade", note: "Formal." },
+            { original: "fox", options: ["vixen", "fox", "animal"], correct: "vixen", type: "Vocabulary Upgrade", note: "Female fox." },
+            { original: "empty", options: ["derelict", "empty", "abandoned"], correct: "derelict", type: "Vocabulary Upgrade", note: "Run-down." },
+            { original: "just", options: ["Only", "just", "merely"], correct: "Only", type: "Grammar", note: "Capitalization." },
+            { original: "emerge", options: ["emerged", "emerge", "emerging"], correct: "emerged", type: "Grammar", note: "Past simple." },
+            { original: "hanting", options: ["haunting", "hanting", "haunted"], correct: "haunting", type: "Spelling", note: "Needs the 'u'." },
+            { original: "night", options: ["nocturnal", "night", "nightly"], correct: "nocturnal", type: "Vocabulary Upgrade", note: "Night-active." },
+            { original: "view", options: ["tableau", "view", "scene"], correct: "tableau", type: "Vocabulary Upgrade", note: "Static scene." }
+        ],
+        deepDive: {
+            sensory: "👃 **Olfactory**: 'Putrefying' fruit aroma creates a visceral, unpleasant setting. 👁️ **Visual**: 'Ethereal' ghosts suggest light and shadows.",
+            rhetoric: "🖼️ **Vocabulary**: 'Tableau' is a great SPGS word for a frozen, artistic scene.",
+            vocabulary: "📚 **Derelict**: Implies both empty and in a state of decay."
+        }
+    },
+    {
+        title: "17. Through the Keyhole",
+        content: "I held my [0] as I peered through the [1] keyhole. The room beyond was [2] by a single [3] candle. [4] in the center [5] a [6] box. Its [7] surface [8] with [9] symbols. Who [10] left [11] there? My heart [12] against my ribs [13] like a [14] [15].",
+        errors: [
+            { original: "breathe", options: ["breath", "breathe", "breathing"], correct: "breath", type: "Spelling", note: "Noun 'breath'." },
+            { original: "old", options: ["corroded", "old", "rusty"], correct: "corroded", type: "Vocabulary Upgrade", note: "Eaten by rust." },
+            { original: "lit", options: ["illuminated", "lit", "lighted"], correct: "illuminated", type: "Vocabulary Upgrade", note: "Elegant verb." },
+            { original: "flickeringly", options: ["flickering", "flickeringly", "flicker"], correct: "flickering", type: "Grammar", note: "Adjective." },
+            { original: "Sitting", options: ["Poised", "Sitting", "Placed"], correct: "Poised", type: "Vocabulary Upgrade", note: "Tense balance." },
+            { original: "was", options: ["stood", "was", "were"], correct: "stood", type: "Vocabulary Upgrade", note: "More active." },
+            { original: "shiny", options: ["lacquered", "shiny", "polished"], correct: "lacquered", type: "Vocabulary Upgrade", note: "High-gloss." },
+            { original: "wooden", options: ["ebony", "wooden", "dark"], correct: "ebony", type: "Vocabulary Upgrade", note: "Dark wood." },
+            { original: "shining", options: ["shimmered", "shining", "glowed"], correct: "shimmered", type: "Vocabulary Upgrade", note: "Light reflection." },
+            { original: "strange", options: ["cryptic", "strange", "odd"], correct: "cryptic", type: "Vocabulary Upgrade", note: "Hidden meaning." },
+            { original: "did", options: ["had", "did", "has"], correct: "had", type: "Grammar", note: "Past perfect." },
+            { original: "this", options: ["it", "this", "them"], correct: "it", type: "Grammar", note: "Pronoun." },
+            { original: "hamered", options: ["hammered", "hamered", "hammared"], correct: "hammered", type: "Spelling", note: "Double 'm'." },
+            { original: "wild", options: ["wildly", "wild", "wildest"], correct: "wildly", type: "Grammar", note: "Adverb." },
+            { original: "trapped", options: ["captive", "trapped", "prisoner"], correct: "captive", type: "Vocabulary Upgrade", note: "Literary." },
+            { original: "bird", options: ["songbird", "bird", "creature"], correct: "songbird", type: "Vocabulary Upgrade", note: "Vulnerable imagery." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Ebony' and 'Lacquered' show high contrast and texture. 👂 **Auditory**: 'Hammered' heart emphasizes pulse.",
+            rhetoric: "🗝️ **Suspense**: The keyhole perspective limits what we see, forcing the reader to imagine.",
+            vocabulary: "📚 **Cryptic**: Synonyms: enigmatic. Good for mysterious plot elements."
+        }
+    },
+    {
+        title: "18. The Last Train",
+        content: "The [0] of the engine [1] into the [2] night. Platform 9 was [3], [4] for a [5] newspaper [6] in the [7]. I [8] my suitcase, my [9] [10] with the [11] cold. The [12] of the [13] [14] me; it was [15].",
+        errors: [
+            { original: "noise", options: ["rhythm", "noise", "sound"], correct: "rhythm", type: "Vocabulary Upgrade", note: "Train pattern." },
+            { original: "faded", options: ["receded", "faded", "went"], correct: "receded", type: "Vocabulary Upgrade", note: "Moving away." },
+            { original: "dark", options: ["desolate", "dark", "empty"], correct: "desolate", type: "Vocabulary Upgrade", note: "Lonely feel." },
+            { original: "empty", options: ["deserted", "empty", "vacant"], correct: "deserted", type: "Vocabulary Upgrade", note: "Abandoned." },
+            { original: "except", options: ["save", "except", "but"], correct: "save", type: "Vocabulary Upgrade", note: "Literary 'except'." },
+            { original: "old", options: ["discarded", "old", "used"], correct: "discarded", type: "Vocabulary Upgrade", note: "Thrown away." },
+            { original: "moving", options: ["skittering", "moving", "dancing"], correct: "skittering", type: "Vocabulary Upgrade", note: "Light movement." },
+            { original: "wind", options: ["draught", "wind", "breeze"], correct: "draught", type: "Vocabulary Upgrade", note: "Building cold air." },
+            { original: "held", options: ["clutched", "held", "gripped"], correct: "clutched", type: "Vocabulary Upgrade", note: "Shows fear." },
+            { original: "knucles", options: ["knuckles", "knucles", "nuckles"], correct: "knuckles", type: "Spelling", note: "Silent 'k'." },
+            { original: "white", options: ["pallid", "white", "pale"], correct: "pallid", type: "Vocabulary Upgrade", note: "Sickly pale." },
+            { original: "coldly", options: ["piercing", "coldly", "biting"], correct: "piercing", type: "Vocabulary Upgrade", note: "Sharp cold." },
+            { original: "silence", options: ["stillness", "silence", "quiet"], correct: "stillness", type: "Vocabulary Upgrade", note: "Lack of motion." },
+            { original: "station", options: ["concourse", "station", "building"], correct: "concourse", type: "Vocabulary Upgrade", note: "Station area." },
+            { original: "disturbed", options: ["unsettled", "disturbed", "scared"], correct: "unsettled", type: "Vocabulary Upgrade", note: "Uneasy." },
+            { original: "overwelming", options: ["overwhelming", "overwelming", "overwhelmeing"], correct: "overwhelming", type: "Spelling", note: "Needs 'h'." }
+        ],
+        deepDive: {
+            sensory: "✋ **Tactile**: 'Piercing cold' and 'clutched' show physical discomfort. 👁️ **Visual**: Empty 'concourse' creates scale.",
+            rhetoric: "🌫️ **Atmosphere**: Using 'receded' and 'desolate' emphasizes themes of departure and loss.",
+            vocabulary: "📚 **Pallid**: A much stronger word than 'pale' for emotional impact."
+        }
+    },
+    {
+        title: "19. Encounter with a Stag",
+        content: "I [0] still, [1] to make a [2]. In the [3] [4], a [5] stag [6]. Its antlers, [7] like [8], [9] the moonlight. Neither of us [10]; [11] was a [12] [13]. For a [14] [15], the world stopped.",
+        errors: [
+            { original: "stood", options: ["remained", "stood", "was"], correct: "remained", type: "Grammar", note: "Past simple." },
+            { original: "afraid", options: ["loath", "afraid", "scared"], correct: "loath", type: "Vocabulary Upgrade", note: "Reluctant." },
+            { original: "sound", options: ["disturbance", "sound", "noise"], correct: "disturbance", type: "Vocabulary Upgrade", note: "More precise." },
+            { original: "green", options: ["verdant", "green", "leafy"], correct: "verdant", type: "Vocabulary Upgrade", note: "Literary green." },
+            { original: "woods", options: ["undergrowth", "woods", "bushes"], correct: "undergrowth", type: "Vocabulary Upgrade", note: "Ground plants." },
+            { original: "big", options: ["majestic", "big", "large"], correct: "majestic", type: "Vocabulary Upgrade", note: "Grand." },
+            { original: "appeared", options: ["materialised", "appeared", "came"], correct: "materialised", type: "Vocabulary Upgrade", note: "Appear from nowhere." },
+            { original: "branching", options: ["branching", "branch", "branched"], correct: "branching", type: "Grammar", note: "Participle." },
+            { original: "trees", options: ["coral", "trees", "antlers"], correct: "coral", type: "Vocabulary Upgrade", note: "Metaphor." },
+            { original: "caught", options: ["fractured", "caught", "held"], correct: "fractured", type: "Vocabulary Upgrade", note: "Light breaking." },
+            { original: "moved", options: ["flinched", "moved", "flinched"], correct: "flinched", type: "Grammar", note: "Sudden move." },
+            { original: "their", options: ["there", "their", "they're"], correct: "there", type: "Grammar", note: "Place marker." },
+            { original: "short", options: ["fleeting", "short", "quick"], correct: "fleeting", type: "Vocabulary Upgrade", note: "Short-lived." },
+            { original: "link", options: ["communion", "link", "connection"], correct: "communion", type: "Vocabulary Upgrade", note: "Deep connection." },
+            { original: "still", options: ["suspended", "still", "long"], correct: "suspended", type: "Vocabulary Upgrade", note: "Hanging time." },
+            { original: "moment", options: ["instant", "moment", "second"], correct: "instant", type: "Vocabulary Upgrade", note: "Formal noun." }
+        ],
+        deepDive: {
+            sensory: "👁️ **Visual**: 'Fractured' moonlight and 'Verdant' growth paint a rich picture. 🦢 **Movement**: 'Materialised' adds magic.",
+            rhetoric: "🪸 **Metaphor**: Comparing antlers to 'coral' is an unusual but effective visual image.",
+            vocabulary: "📚 **Loath**: A classic SPGS vocabulary word meaning 'unwilling'."
+        }
+    },
+    {
+        title: "20. The Secret Library",
+        content: "Bookshelves [0] toward the [1] ceiling, [2] with [3] volumes. The air [4] [5] with the [6] of [7] paper. I [8] a [9] spine. Every [10] [11] a [12] story. [13] were [14] secrets [15] here.",
+        errors: [
+            { original: "climbed", options: ["ascended", "climbed", "went"], correct: "ascended", type: "Vocabulary Upgrade", note: "Going up." },
+            { original: "high", options: ["vaulted", "high", "arched"], correct: "vaulted", type: "Vocabulary Upgrade", note: "Architectural." },
+            { original: "full", options: ["laden", "full", "packed"], correct: "laden", type: "Vocabulary Upgrade", note: "Loaded." },
+            { original: "old", options: ["leather-bound", "old", "ancient"], correct: "leather-bound", type: "Vocabulary Upgrade", note: "Specific detail." },
+            { original: "smelled", options: ["fragranced", "smelled", "was"], correct: "was", type: "Grammar", note: "Being verb." },
+            { original: "heavy", options: ["heavily", "heavy", "heavier"], correct: "heavily", type: "Grammar", note: "Adverb." },
+            { original: "smell", options: ["perfume", "smell", "scent"], correct: "perfume", type: "Vocabulary Upgrade", note: "Metaphor scent." },
+            { original: "aging", options: ["parchment", "aging", "yellow"], correct: "parchment", type: "Vocabulary Upgrade", note: "Old paper." },
+            { original: "touched", options: ["caressed", "touched", "felt"], correct: "caressed", type: "Vocabulary Upgrade", note: "Gentle touch." },
+            { original: "shiny", options: ["gilded", "shiny", "bright"], correct: "gilded", type: "Vocabulary Upgrade", note: "Gold leaf." },
+            { original: "book", options: ["tome", "book", "volume"], correct: "tome", type: "Vocabulary Upgrade", note: "Big book." },
+            { original: "held", options: ["harboured", "held", "kept"], correct: "harboured", type: "Vocabulary Upgrade", note: "Contained secrets." },
+            { original: "secret", options: ["forgotten", "secret", "hidden"], correct: "forgotten", type: "Vocabulary Upgrade", note: "Lost over time." },
+            { original: "Their", options: ["There", "Their", "They're"], correct: "There", type: "Grammar", note: "Place." },
+            { original: "many", options: ["myriad", "many", "countless"], correct: "myriad", type: "Vocabulary Upgrade", note: "A great number." },
+            { original: "hidden", options: ["sequestered", "hidden", "kept"], correct: "sequestered", type: "Vocabulary Upgrade", note: "Isolated." }
+        ],
+        deepDive: {
+            sensory: "👃 **Olfactory**: 'Perfume of parchment' is a beautiful sensory detail. ✋ **Tactile**: 'Caressed' shows respect for books.",
+            rhetoric: "🏛️ **Mood**: The 'vaulted' ceiling and 'laden' shelves create a temple-like atmosphere for knowledge.",
+            vocabulary: "📚 **Tome**: An excellent 11+ word for a large, ancient book."
+        }
+    },
+   {
+    title: '21. Creative Writing: The Forgotten Grand',
+    content: "In the corner of the drawing-room [0], the grand piano sat in [1], a [2] of [3] and ivory that had not sung for a generation [4]. A fine [5] of dust – grey and indifferent – [6] its once lustrous surface [7], turning the [8] wood into a ghost of its former self [9]. To a casual observer it was merely furniture; however, [10] to those who remembered the frantic energy of the grand recitals [11], the stillness was a [12] weight. Each key, now [13] like an old man's teeth, held a dormant melody, waiting for a touch that would never [14].",
+    errors: [
+        {
+            original: 'drawing room',
+            options: ['drawing-room', 'drawing room', 'drawingrooms'],
+            correct: 'drawing-room',
+            type: 'SPaG',
+            note: 'In British English, "drawing-room" is traditionally hyphenated.'
+        },
+        {
+            original: 'funeral silence',
+            options: ['funereal silence', 'funeral silence', 'deathly silence'],
+            correct: 'funereal silence',
+            type: 'Style',
+            note: '“Funereal” is the sophisticated adjective form for a burial atmosphere.'
+        },
+        {
+            original: 'hulking beast',
+            options: ['hulking beast', 'bulky animal', 'large creature'],
+            correct: 'hulking beast',
+            type: 'Vocabulary Upgrade',
+            note: '“Hulking” suggests something massive and awkward, adding to the personification.'
+        },
+        {
+            original: 'mahogany & ivory',
+            options: ['mahogany and ivory', 'mahogany & ivory', 'wood and ivory'],
+            correct: 'mahogany and ivory',
+            type: 'SPaG',
+            note: 'Always use "and" instead of "&" in formal literary prose.'
+        },
+        {
+            original: 'for generations',
+            options: ['for a generation', 'for generations', 'since a generation'],
+            correct: 'for a generation',
+            type: 'Grammar',
+            note: 'The singular "generation" sounds more precise in this context.'
+        },
+        {
+            original: 'shroud',
+            options: ['shroud', 'shroude', 'shrowd'],
+            correct: 'shroud',
+            type: 'Spelling',
+            note: 'A shroud is a burial cloth, perfect for the "funereal" theme.'
+        },
+        {
+            original: 'dust - grey and indifferent -',
+            options: ['dust – grey and indifferent –', 'dust - grey and indifferent -', 'dust, grey and indifferent,'],
+            correct: 'dust – grey and indifferent –',
+            type: 'SPaG',
+            note: 'Spaced en-dashes are a sophisticated way to add parenthetical detail.'
+        },
+        {
+            original: 'veiled',
+            options: ['veiled', 'valed', 'vialed'],
+            correct: 'veiled',
+            type: 'Spelling',
+            note: '“Veiled” continues the imagery of the dust acting like a burial cloth.'
+        },
+        {
+            original: 'gleaming',
+            options: ['gleaming', 'shining', 'bright'],
+            correct: 'gleaming',
+            type: 'Vocabulary Upgrade',
+            note: '“Gleaming” suggests a soft, reflected light from a polished surface.'
+        },
+        {
+            original: 'ghost of it\'s former self',
+            options: ['ghost of its former self', 'ghost of it\'s former self', 'ghost of its\' former self'],
+            correct: 'ghost of its former self',
+            type: 'Grammar',
+            note: '“Its” is the possessive form; “it\'s” is only for “it is” or “it has”.'
+        },
+        {
+            original: 'furniture; however',
+            options: ['furniture; however,', 'furniture, however', 'furniture; however'],
+            correct: 'furniture; however,',
+            type: 'Punctuation',
+            note: 'A semicolon before and a comma after “however” is the correct way to link two main clauses.'
+        },
+        {
+            original: 'grand recitals',
+            options: ['grand recitals', 'Grand Recitals', 'grand-recitals'],
+            correct: 'grand recitals',
+            type: 'Punctuation',
+            note: 'Common nouns like "recitals" should not be capitalized unless part of a proper title.'
+        },
+        {
+            original: 'stifling',
+            options: ['stifling', 'suffocating', 'heavy'],
+            correct: 'stifling',
+            type: 'Vocabulary Upgrade',
+            note: '“Stifling” perfectly conveys a weight that makes it hard to breathe.'
+        },
+        {
+            original: 'yellowing',
+            options: ['yellowed', 'yellowing', 'yellow'],
+            correct: 'yellowed',
+            type: 'Grammar',
+            note: 'The past participle "yellowed" shows that the aging process is complete.'
+        },
+        {
+            original: 'come',
+            options: ['come.', 'come!', 'come'],
+            correct: 'come.',
+            type: 'Punctuation',
+            note: 'A complete descriptive sentence must end with a full stop.'
+        }
+    ],
+    deepDive: {
+        sensory: "The passage excels visually (yellowed teeth, mahogany). Auditory contrast is created through the 'silence' and 'not sung'.",
+        rhetoric: "The 'hulking beast' and the piano 'singing' are powerful examples of personification.",
+        vocabulary: "High-level choices like 'mahogany', 'funereal', and 'dormant' raise the tone significantly."
     }
+}
+
 ];
 
+// --- Core Logic ---
 let stats = { Spelling: { correct: 0, total: 0 }, Punctuation: { correct: 0, total: 0 }, Grammar: { correct: 0, total: 0 }, "Vocabulary Upgrade": { correct: 0, total: 0 } };
 let articlesFinished = new Set();
 let currentScore = 0;
 
+function renderMenu() {
+    const select = document.getElementById("articleSelect");
+    select.innerHTML = ""; 
+    dataset.forEach((art, index) => {
+        let opt = document.createElement("option");
+        opt.value = index;
+        opt.innerText = art.title;
+        select.appendChild(opt);
+    });
+}
+
 function initGame() {
     let index = document.getElementById("articleSelect").value;
     const art = dataset[index];
+    if(!art) return;
+
     currentScore = 0;
     document.getElementById("score").innerText = "0";
     document.getElementById("feedback").innerText = "";
@@ -358,55 +800,63 @@ function handleCheck(idx) {
         document.getElementById("feedback").style.color = "#155724";
         document.getElementById("feedback").innerText = `✓ Excellent! [${errorData.type}] ${errorData.note}`;
         
-        if (currentScore === 15) {
+        if (currentScore === dataset[artIndex].errors.length) {
             articlesFinished.add(artIndex);
             document.getElementById("completedCount").innerText = articlesFinished.size;
-            document.getElementById("feedback").innerText = "CONGRATULATIONS! This text is now perfect. Click 'Print' to save it!";
-            if (articlesFinished.size >= 1) { // Unlock report after any progress
-                document.getElementById("reportBtn").disabled = false;
-            }
+            document.getElementById("feedback").innerText = "CONGRATULATIONS! This text is now perfect.";
+            document.getElementById("reportBtn").disabled = false;
         }
     } else {
         stats[errorData.type].total++;
         document.getElementById("feedback").style.background = "#f8d7da";
         document.getElementById("feedback").style.color = "#721c24";
-        document.getElementById("feedback").innerText = `✗ Not quite. Focus on your ${errorData.type} rules!`;
+        document.getElementById("feedback").innerText = `✗ Review your ${errorData.type} rules!`;
     }
 }
 
-function showReport() {
-    let reportHtml = `<p><strong>Progress:</strong> ${articlesFinished.size} of 10 articles mastered.</p><hr>`;
-    let weakest = { name: "Grammar", accuracy: 101 };
+function showLiteraryDeepDive() {
+    let artIndex = document.getElementById("articleSelect").value;
+    const art = dataset[artIndex];
+    if (!art.deepDive) {
+        alert("Deep dive analysis is coming soon!");
+        return;
+    }
 
+    let diveHtml = `
+        <div class="dive-section" style="border-left-color: #27ae60;">
+            <h4 style="color: #27ae60; margin:0 0 10px 0;">👁️ Sensory Details</h4>
+            <p>${art.deepDive.sensory}</p>
+        </div>
+        <div class="dive-section" style="border-left-color: #e67e22;">
+            <h4 style="color: #e67e22; margin:0 0 10px 0;">🎭 Advanced Rhetoric</h4>
+            <p>${art.deepDive.rhetoric}</p>
+        </div>
+        <div class="dive-section" style="border-left-color: #3498db;">
+            <h4 style="color: #3498db; margin:0 0 10px 0;">📚 Vocabulary & Synonyms</h4>
+            <p>${art.deepDive.vocabulary}</p>
+        </div>
+    `;
+
+    document.getElementById("analysisTitle").innerText = "Deep Dive: " + art.title;
+    document.getElementById("analysisContent").innerHTML = diveHtml;
+    document.getElementById("analysisModal").style.display = "block";
+}
+
+function showReport() {
+    let reportHtml = `<p><strong>Dashboard:</strong> Mastered ${articlesFinished.size} articles.</p><hr>`;
     for (let cat in stats) {
         let accuracy = stats[cat].total > 0 ? Math.round((stats[cat].correct / stats[cat].total) * 100) : 0;
         reportHtml += `<div class="category-score">
-            <div style="display:flex; justify-content:space-between;">
-                <strong>${cat}</strong>
-                <span>${accuracy}%</span>
-            </div>
+            <div style="display:flex; justify-content:space-between;"><strong>${cat}</strong><span>${accuracy}%</span></div>
             <div class="progress-bg"><div class="progress-fill" style="width:${accuracy}%"></div></div>
         </div>`;
-        if (stats[cat].total > 0 && accuracy < weakest.accuracy) {
-            weakest = { name: cat, accuracy: accuracy };
-        }
     }
-
-    const tips = {
-        "Spelling": "Practice 'Look, Cover, Write, Check' for silent letters and homophones (there/their/they're).",
-        "Punctuation": "Master the Semicolon (;) to join independent clauses and use Colons (:) for lists.",
-        "Grammar": "Always double-check Subject-Verb agreement, especially with collective nouns like 'group' or 'team'.",
-        "Vocabulary Upgrade": "Avoid 'dead' words like 'said', 'good', or 'big'. Build a word bank of ambitious synonyms."
-    };
-
-    reportHtml += `<div style="margin-top:20px; padding:15px; background:#fff3cd; border: 1px solid #ffeeba; border-radius:8px;">
-        <strong>Examiner's Verdict:</strong> You need more work on <u>${weakest.name}</u>. ${tips[weakest.name]}
-    </div>`;
-
     document.getElementById("reportData").innerHTML = reportHtml;
     document.getElementById("reportModal").style.display = "block";
 }
 
+// Start Up
+renderMenu();
 initGame();
 </script>
 </body>
